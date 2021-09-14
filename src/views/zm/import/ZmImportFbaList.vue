@@ -1,5 +1,7 @@
 <template>
+
   <a-card :bordered="false">
+
     <!-- 查询区域 -->
     <div class="table-page-search-wrapper">
       <a-form layout="inline" @keyup.enter.native="searchQuery">
@@ -113,6 +115,32 @@
             </a-tabs>
           </div>
         </template>
+        <template>
+
+          <div>
+            <a-button-group size="middle">
+              <a-button icon="login" @click="packing">按客户数据拣货</a-button>
+              <a-button icon="printer">打印标签</a-button>
+              <a-button icon="close-circle">拦截/问题件</a-button>
+              <a-button icon="edit">批量修改</a-button>
+              <a-dropdown >
+                <a-menu slot="overlay" @click="handleMenuClick" icon="cloud-download">
+                  <a-menu-item key="1">
+                    <a-icon type="cloud-download"  @click="handleExportXls('导入fba表')"/>运单
+                  </a-menu-item>
+                  <a-menu-item key="2">
+                    <a-icon type="cloud-download"/>货箱
+                  </a-menu-item>
+                  <a-menu-item key="3" >
+                    <a-icon type="cloud-download"/>申报信息
+                  </a-menu-item>
+                </a-menu>
+                <a-button><a-icon type="cloud-download"/> 导出  </a-button>
+              </a-dropdown>
+              <a-button type="danger" > <a-icon type="close" />取消</a-button>
+            </a-button-group>
+          </div>
+        </template>
       </div>
       <!-- 查询区域-END -->
       <a-table
@@ -145,7 +173,6 @@
         </div>
         <a-icon slot="filterIcon" type='setting' :style="{ fontSize:'16px',color:  '#108ee9' }" />
         <!--        自定义列-->
-
         <template slot="htmlSlot" slot-scope="text">
           <div v-html="text"></div>
         </template>
@@ -154,6 +181,7 @@
           <img v-else :src="getImgView(text)" height="25px" alt="" style="max-width:80px;font-size: 12px;font-style: italic;"/>
         </template>
         <template slot="fileSlot" slot-scope="text">
+
           <span v-if="!text" style="font-size: 12px;font-style: italic;">无文件</span>
           <a-button
             v-else
@@ -249,9 +277,11 @@
             align:"center",
             sorter: true,
             dataIndex: 'fbaid',
+
           },
           {
             title:'客户订单号',
+            sorter: true,
             align:"center",
             dataIndex: 'orderid'
           },
@@ -268,6 +298,7 @@
           {
             title:'收件人姓名',
             align:"center",
+            sorter: true,
             dataIndex: 'name'
           },
           {
@@ -465,6 +496,33 @@
         console.log('---------------');
         console.log(key);
       },
+
+      //客户数据拣货
+      packing: function(){
+        console.log(this.selectionRows.length);
+          if (this.selectionRows.length==0){
+            this.error();
+          }
+          this.confirm();
+
+      },
+      error() {
+        this.$error({
+          title: '货单未选择',
+          content: '请选择一条记录！',
+        });
+        return;
+      },
+      confirm() {
+        this.$confirm({
+          title: '确认fbaid',
+          content: this.selectionRows[0].fbaid,
+          okText: '确认',
+          cancelText: '取消',
+        });
+      },
+
+
       //列设置更改事件
       onColSettingsChange (checkedValues) {
         var key = this.$route.name+":colsettings";

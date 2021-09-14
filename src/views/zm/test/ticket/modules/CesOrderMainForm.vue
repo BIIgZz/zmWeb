@@ -44,7 +44,7 @@
       <a-tab-pane tab="订单客户" :key="refKeys[1]" :forceRender="true">
         <ces-order-customer-form ref="cesOrderCustomerForm" @validateError="validateError" :disabled="formDisabled"></ces-order-customer-form>
       </a-tab-pane>
-
+      
     </a-tabs>
   </a-spin>
 </template>
@@ -137,14 +137,14 @@
           ]
         },
         url: {
-          add: "/main/cesOrderMain/add",
-          edit: "/main/cesOrderMain/edit",
-          queryById: "/main/cesOrderMain/queryById",
+          add: "/test/cesOrderMain/add",
+          edit: "/test/cesOrderMain/edit",
+          queryById: "/test/cesOrderMain/queryById",
           cesOrderGoods: {
-            list: '/main/cesOrderMain/queryCesOrderGoodsByMainId'
+            list: '/test/cesOrderMain/queryCesOrderGoodsByMainId'
           },
           cesOrderCustomer: {
-            list: '/main/cesOrderMain/queryCesOrderCustomerByMainId'
+            list: '/test/cesOrderMain/queryCesOrderCustomerByMainId'
           },
         }
       }
