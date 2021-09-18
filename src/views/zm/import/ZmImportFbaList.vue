@@ -119,7 +119,7 @@
 
           <div>
             <a-button-group size="middle">
-              <a-button icon="login" @click="packing">按客户数据拣货</a-button>
+              <a-button icon="login" @click="showConfirm">按客户数据拣货</a-button>
               <a-button icon="printer">打印标签</a-button>
               <a-button icon="close-circle">拦截/问题件</a-button>
               <a-button icon="edit">批量修改</a-button>
@@ -519,7 +519,25 @@
           content: this.selectionRows[0].fbaid,
           okText: '确认',
           cancelText: '取消',
+          onOk: this.onConfirm()
         });
+      },
+      showConfirm() {
+        if (this.selectionRows.length==0){
+          this.error();
+        }else {
+          this.$confirm({
+            title: 'Do you want to modify these items?',
+            content: 'When clicked the OK button, this dialog will be closed after 1 second',
+            onOk() {
+              return new Promise((resolve, reject) => {
+                setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
+              }).catch(() => console.log('Oops errors!'));
+            },
+            onCancel() {},
+          });
+        }
+
       },
 
 
