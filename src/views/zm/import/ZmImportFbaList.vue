@@ -104,7 +104,7 @@
 <!--        </a-form>-->
         <template>
           <div>
-            <a-tabs default-active-key="1"  type="card" @change="searchQuery"    v-model="queryParam.status">
+            <a-tabs default-active-key="1"  type="card" @change="searchQuery" @click='error'   v-model="queryParam.status">
               <a-tab-pane key="0" tab="已下单"  />
               <a-tab-pane key="1" tab="已收货" force-render/>
               <a-tab-pane key="2" tab="转运中"/>
@@ -155,8 +155,9 @@
         :pagination="ipagination"
         :loading="loading"
         :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
+        :customRow="Rowclick"
         @change="handleTableChange">
-
+        <a slot="name" slot-scope="text">{{ text }}</a>
         <!--        自定义列-->
         <div slot="filterDropdown">
           <a-card>
@@ -277,7 +278,7 @@
             align:"center",
             sorter: true,
             dataIndex: 'fbaid',
-
+            scopedSlots: { customRender: 'name' },
           },
           {
             title:'客户订单号',
@@ -468,6 +469,13 @@
               customRender: 'action'},
           }
         ],
+        Rowclick: (record, index) => ({
+          on: {
+            click: () => {
+              this.handleDetails(record);
+            },
+          },
+        }),
         url: {
           list: "/zmexpress/zmImportFba/list",
           delete: "/zmexpress/zmImportFba/delete",

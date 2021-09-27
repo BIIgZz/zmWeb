@@ -364,7 +364,7 @@
     },
     computed: {
       title () {
-        return this.$route.meta.title
+        return this.$route.query.record.fbaid
       }
     },
 
