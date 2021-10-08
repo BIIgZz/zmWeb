@@ -104,43 +104,375 @@
 <!--        </a-form>-->
         <template>
           <div>
-            <a-tabs default-active-key="1"  type="card" @change="searchQuery" @click='error'   v-model="queryParam.status">
-              <a-tab-pane key="0" tab="已下单"  />
-              <a-tab-pane key="1" tab="已收货" force-render/>
-              <a-tab-pane key="2" tab="转运中"/>
-              <a-tab-pane key="3" tab="已签收"/>
-              <a-tab-pane key="4" tab="退件"/>
-              <a-tab-pane key="5" tab="已取消"/>
-              <a-tab-pane key="" tab="全部" />
+            <a-tabs default-active-key="0"  type="card" @change="searchQuery"     v-model="queryParam.status">
+              <a-tab-pane key="0" tab="已下单"    >
+                <template>
+                  <div>
+                    <a-button-group size="middle">
+                      <a-button icon="login" @click="showConfirm">按客户数据拣货</a-button>
+                      <a-button icon="printer">打印标签</a-button>
+                      <a-button icon="close-circle">拦截/问题件</a-button>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="handleMenuClick" icon="edit">
+                          <a-menu-item key="1">
+                            <a-icon type="edit"/>服务
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="edit"/>供应商服务
+                          </a-menu-item>
+                          <a-menu-item key="3" >
+                            <a-icon type="edit"/>备注
+                          </a-menu-item>
+                          <a-menu-item key="4" >
+                            <a-icon type="edit"/>内部备注
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="edit"/> 批量修改  </a-button>
+                      </a-dropdown>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="handleMenuClick" icon="cloud-download">
+                          <a-menu-item key="1">
+                            <a-icon type="cloud-download"  @click="handleExportXls('导入fba表')"/>运单
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="cloud-download"/>货箱
+                          </a-menu-item>
+                          <a-menu-item key="3" >
+                            <a-icon type="cloud-download"/>申报信息
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="cloud-download"/> 导出  </a-button>
+                      </a-dropdown>
+                      <a-button type="danger" > <a-icon type="close" />取消</a-button>
+                    </a-button-group>
+                  </div>
+                </template>
+              </a-tab-pane>
+              <a-tab-pane key="1" tab="已收货" force-render>
+                <template>
+                  <div>
+                    <a-button-group size="middle">
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="handleMenuClick" icon="cloud-download">
+                          <a-menu-item key="1">
+                            <a-icon type="cloud-download"/>放入出货单
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="cloud-download"/>放入提单
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="cloud-download"/> 配货  </a-button>
+                      </a-dropdown>
+                      <a-button icon="printer">打印标签</a-button>
+                      <a-button icon="close-circle">拦截/问题件</a-button>
+                      <a-button icon="stop">退件</a-button>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="handleMenuClick" icon="cloud-download">
+                          <a-menu-item key="1">
+                            <a-icon type="vertical-align-top" />转运中
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="issues-close"/> 状态调整  </a-button>
+                      </a-dropdown>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="handleMenuClick" icon="edit">
+                          <a-menu-item key="1">
+                            <a-icon type="edit"/>服务
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="edit"/>供应商服务
+                          </a-menu-item>
+                          <a-menu-item key="3" >
+                            <a-icon type="edit"/>备注
+                          </a-menu-item>
+                          <a-menu-item key="4" >
+                            <a-icon type="edit"/>内部备注
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="edit"/> 批量修改  </a-button>
+                      </a-dropdown>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="handleMenuClick" icon="cloud-download">
+                          <a-menu-item key="1">
+                            <a-icon type="cloud-download"  @click="handleExportXls('导入fba表')"/>运单
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="cloud-download"/>货箱
+                          </a-menu-item>
+                          <a-menu-item key="3" >
+                            <a-icon type="cloud-download"/>申报信息
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="cloud-download"/> 导出  </a-button>
+                      </a-dropdown>
+                      <a-button icon="plus-circle">入仓</a-button>
+
+                    </a-button-group>
+                  </div>
+                </template>
+              </a-tab-pane>
+              <a-tab-pane key="2" tab="转运中">
+                <template>
+                  <div>
+                    <a-button-group size="middle">
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="handleMenuClick" icon="cloud-download">
+                          <a-menu-item key="1">
+                            <a-icon type="cloud-download"/>放入出货单
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="cloud-download"/>放入提单
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="cloud-download"/> 配货  </a-button>
+                      </a-dropdown>
+                      <a-button icon="printer">打印标签</a-button>
+                      <a-button icon="close-circle">拦截/问题件</a-button>
+                      <a-button icon="stop">退件</a-button>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="handleMenuClick" icon="cloud-download">
+                          <a-menu-item key="1">
+                            <a-icon type="vertical-align-top" />已签收
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="issues-close"/> 状态调整  </a-button>
+                      </a-dropdown>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="handleMenuClick" icon="edit">
+                          <a-menu-item key="1">
+                            <a-icon type="edit"/>服务
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="edit"/>供应商服务
+                          </a-menu-item>
+                          <a-menu-item key="3" >
+                            <a-icon type="edit"/>备注
+                          </a-menu-item>
+                          <a-menu-item key="4" >
+                            <a-icon type="edit"/>内部备注
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="edit"/> 批量修改  </a-button>
+                      </a-dropdown>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="handleMenuClick" icon="cloud-download">
+                          <a-menu-item key="1">
+                            <a-icon type="cloud-download"  @click="handleExportXls('导入fba表')"/>运单
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="cloud-download"/>货箱
+                          </a-menu-item>
+                          <a-menu-item key="3" >
+                            <a-icon type="cloud-download"/>申报信息
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="cloud-download"/> 导出  </a-button>
+                      </a-dropdown>
+                      <a-button icon="plus-circle">入仓</a-button>
+
+                    </a-button-group>
+                  </div>
+                </template>
+              </a-tab-pane>
+              <a-tab-pane key="3" tab="已签收">
+                <template>
+                  <div>
+                    <a-button-group size="middle">
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="handleMenuClick" icon="cloud-download">
+                          <a-menu-item key="1">
+                            <a-icon type="cloud-download"/>放入出货单
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="cloud-download"/>放入提单
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="cloud-download"/> 配货  </a-button>
+                      </a-dropdown>
+                      <a-button icon="printer">打印标签</a-button>
+                      <a-button icon="close-circle">拦截/问题件</a-button>
+                      <a-button icon="stop">退件</a-button>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="handleMenuClick" icon="cloud-download">
+                          <a-menu-item key="1">
+                            <a-icon type="vertical-align-top" />已签收
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="issues-close"/> 状态调整  </a-button>
+                      </a-dropdown>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="handleMenuClick" icon="edit">
+                          <a-menu-item key="1">
+                            <a-icon type="edit"/>服务
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="edit"/>供应商服务
+                          </a-menu-item>
+                          <a-menu-item key="3" >
+                            <a-icon type="edit"/>备注
+                          </a-menu-item>
+                          <a-menu-item key="4" >
+                            <a-icon type="edit"/>内部备注
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="edit"/> 批量修改  </a-button>
+                      </a-dropdown>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="handleMenuClick" icon="cloud-download">
+                          <a-menu-item key="1">
+                            <a-icon type="cloud-download"  @click="handleExportXls('导入fba表')"/>运单
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="cloud-download"/>货箱
+                          </a-menu-item>
+                          <a-menu-item key="3" >
+                            <a-icon type="cloud-download"/>申报信息
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="cloud-download"/> 导出  </a-button>
+                      </a-dropdown>
+                      <a-button icon="plus-circle">入仓</a-button>
+
+                    </a-button-group>
+                  </div>
+                </template>
+              </a-tab-pane>
+              <a-tab-pane key="4" tab="退件">
+                <template>
+                  <div>
+                    <a-button-group size="middle">
+                      <a-button icon="printer">打印标签</a-button>
+                      <a-button icon="close-circle">拦截/问题件</a-button>
+                      <a-button icon="redo">重新发货</a-button>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="handleMenuClick" icon="edit">
+                          <a-menu-item key="1">
+                            <a-icon type="edit"/>服务
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="edit"/>供应商服务
+                          </a-menu-item>
+                          <a-menu-item key="3" >
+                            <a-icon type="edit"/>备注
+                          </a-menu-item>
+                          <a-menu-item key="4" >
+                            <a-icon type="edit"/>内部备注
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="edit"/> 批量修改  </a-button>
+                      </a-dropdown>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="handleMenuClick" icon="cloud-download">
+                          <a-menu-item key="1">
+                            <a-icon type="cloud-download"  @click="handleExportXls('导入fba表')"/>运单
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="cloud-download"/>货箱
+                          </a-menu-item>
+                          <a-menu-item key="3" >
+                            <a-icon type="cloud-download"/>申报信息
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="cloud-download"/> 导出  </a-button>
+                      </a-dropdown>
+                      <a-button icon="plus-circle">入仓</a-button>
+
+                    </a-button-group>
+                  </div>
+                </template>
+              </a-tab-pane>
+              <a-tab-pane key="5" tab="已取消">
+                <template>
+                  <div>
+                    <a-button-group size="middle">
+                      <a-button icon="printer">打印标签</a-button>
+                      <a-button icon="close-circle">拦截/问题件</a-button>
+                      <a-button icon="redo">重新发货</a-button>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="handleMenuClick" icon="edit">
+                          <a-menu-item key="1">
+                            <a-icon type="edit"/>服务
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="edit"/>供应商服务
+                          </a-menu-item>
+                          <a-menu-item key="3" >
+                            <a-icon type="edit"/>备注
+                          </a-menu-item>
+                          <a-menu-item key="4" >
+                            <a-icon type="edit"/>内部备注
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="edit"/> 批量修改  </a-button>
+                      </a-dropdown>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="handleMenuClick" icon="cloud-download">
+                          <a-menu-item key="1">
+                            <a-icon type="cloud-download"  @click="handleExportXls('导入fba表')"/>运单
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="cloud-download"/>货箱
+                          </a-menu-item>
+                          <a-menu-item key="3" >
+                            <a-icon type="cloud-download"/>申报信息
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="cloud-download"/> 导出  </a-button>
+                      </a-dropdown>
+                      <a-button icon="plus-circle">入仓</a-button>
+
+                    </a-button-group>
+                  </div>
+                </template>
+              </a-tab-pane>
+              <a-tab-pane key="" tab="全部" >
+                <template>
+                  <div>
+                    <a-button-group size="middle">
+                      <a-button icon="printer">打印标签</a-button>
+                      <a-button icon="close-circle">拦截/问题件</a-button>
+                      <a-button icon="redo">重新发货</a-button>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="handleMenuClick" icon="edit">
+                          <a-menu-item key="1">
+                            <a-icon type="edit"/>服务
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="edit"/>供应商服务
+                          </a-menu-item>
+                          <a-menu-item key="3" >
+                            <a-icon type="edit"/>备注
+                          </a-menu-item>
+                          <a-menu-item key="4" >
+                            <a-icon type="edit"/>内部备注
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="edit"/> 批量修改  </a-button>
+                      </a-dropdown>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="handleMenuClick" icon="cloud-download">
+                          <a-menu-item key="1">
+                            <a-icon type="cloud-download"  @click="handleExportXls('导入fba表')"/>运单
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="cloud-download"/>货箱
+                          </a-menu-item>
+                          <a-menu-item key="3" >
+                            <a-icon type="cloud-download"/>申报信息
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="cloud-download"/> 导出  </a-button>
+                      </a-dropdown>
+                      <a-button icon="plus-circle">入仓</a-button>
+
+                    </a-button-group>
+                  </div>
+                </template>
+              </a-tab-pane>
             </a-tabs>
           </div>
         </template>
-        <template>
 
-          <div>
-            <a-button-group size="middle">
-              <a-button icon="login" @click="showConfirm">按客户数据拣货</a-button>
-              <a-button icon="printer">打印标签</a-button>
-              <a-button icon="close-circle">拦截/问题件</a-button>
-              <a-button icon="edit">批量修改</a-button>
-              <a-dropdown >
-                <a-menu slot="overlay" @click="handleMenuClick" icon="cloud-download">
-                  <a-menu-item key="1">
-                    <a-icon type="cloud-download"  @click="handleExportXls('导入fba表')"/>运单
-                  </a-menu-item>
-                  <a-menu-item key="2">
-                    <a-icon type="cloud-download"/>货箱
-                  </a-menu-item>
-                  <a-menu-item key="3" >
-                    <a-icon type="cloud-download"/>申报信息
-                  </a-menu-item>
-                </a-menu>
-                <a-button><a-icon type="cloud-download"/> 导出  </a-button>
-              </a-dropdown>
-              <a-button type="danger" > <a-icon type="close" />取消</a-button>
-            </a-button-group>
-          </div>
-        </template>
       </div>
       <!-- 查询区域-END -->
       <a-table
@@ -158,6 +490,19 @@
         :customRow="Rowclick"
         @change="handleTableChange">
         <a slot="name" slot-scope="text">{{ text }}</a>
+<!--抽屉-->
+<!--        <a-drawer-->
+<!--          title="Basic Drawer"-->
+<!--          placement="right"-->
+<!--          :closable="false"-->
+<!--          :visible="visible"-->
+<!--          :get-container="false"-->
+<!--          :wrap-style="{ position: 'absolute' }"-->
+<!--          @close="onClose"-->
+<!--        >-->
+<!--          <p>Some contents...</p>-->
+<!--        </a-drawer>-->
+
         <!--        自定义列-->
         <div slot="filterDropdown">
           <a-card>
@@ -255,6 +600,8 @@
     data () {
       return {
         description: '导入FBA表管理页面',
+        visible: false,
+        activeKey:0,
         // 表头
         total: 0,
         showTotal: total => {
@@ -498,7 +845,16 @@
       }
     },
     methods: {
+      afterVisibleChange(val) {
 
+        console.log('visible', val);
+      },
+      showDrawer() {
+        this.visible = true;
+      },
+      onClose() {
+        this.visible = false;
+      },
       //根据tab设置菜单
       settingTab(key){
         console.log('---------------');
