@@ -266,7 +266,6 @@ export const JeecgListMixin = {
     },
     handleDetails:function(record){
       this.$router.push({path: '/profile/basic',query:{record: record}})
-
     },
     handleDetail:function(record){
       this.$refs.modalForm.edit(record);

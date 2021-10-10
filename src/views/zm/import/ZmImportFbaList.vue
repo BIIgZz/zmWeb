@@ -43,10 +43,10 @@
 
       <div class="table-operator" >
 
-        <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>
+        <a-button @click="handleAdd" type="primary" icon="plus">创建运单</a-button>
         <a-button type="primary" icon="download" @click="handleExportXls('导入fba表')">导出</a-button>
         <a-upload name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl" @change="handleImportExcel">
-          <a-button type="primary" icon="import">导入</a-button>
+          <a-button type="primary" icon="import">Excel导入</a-button>
         </a-upload>
 
         <!-- 高级查询区域 -->
@@ -487,22 +487,8 @@
         :pagination="ipagination"
         :loading="loading"
         :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
-        :customRow="Rowclick"
         @change="handleTableChange">
         <a slot="name" slot-scope="text">{{ text }}</a>
-<!--抽屉-->
-<!--        <a-drawer-->
-<!--          title="Basic Drawer"-->
-<!--          placement="right"-->
-<!--          :closable="false"-->
-<!--          :visible="visible"-->
-<!--          :get-container="false"-->
-<!--          :wrap-style="{ position: 'absolute' }"-->
-<!--          @close="onClose"-->
-<!--        >-->
-<!--          <p>Some contents...</p>-->
-<!--        </a-drawer>-->
-
         <!--        自定义列-->
         <div slot="filterDropdown">
           <a-card>
@@ -600,8 +586,6 @@
     data () {
       return {
         description: '导入FBA表管理页面',
-        visible: false,
-        activeKey:0,
         // 表头
         total: 0,
         showTotal: total => {
@@ -626,6 +610,7 @@
             sorter: true,
             dataIndex: 'fbaid',
             scopedSlots: { customRender: 'name' },
+            customCell:this.cellClick
           },
           {
             title:'客户订单号',
@@ -819,7 +804,8 @@
         Rowclick: (record, index) => ({
           on: {
             click: () => {
-              this.handleDetails(record);
+
+               this.handleDetails(record);
             },
           },
         }),
@@ -845,15 +831,18 @@
       }
     },
     methods: {
-      afterVisibleChange(val) {
-
-        console.log('visible', val);
-      },
-      showDrawer() {
-        this.visible = true;
-      },
-      onClose() {
-        this.visible = false;
+      //单元格点击事件
+      cellClick(record) {
+        return {
+          style: {
+            // 'color': 'blue', //这里将名称变了下色
+          },
+          on: {
+            click: () => { //点击事件，也可以加其他事件
+              this.handleDetails(record);
+            }
+          }
+        }
       },
       //根据tab设置菜单
       settingTab(key){

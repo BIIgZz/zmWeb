@@ -82,12 +82,31 @@
     </a-card>
 
     <template slot="action">
-      <a-button-group style="margin-right: 4px;">
-        <a-button type="primary" style="margin-right: 4px;" @click="handleExportXls('导入fba表')">导出箱单发票</a-button>
-        <a-button type="primary" style="margin-right: 4px;">导出唛头</a-button>
-        <a-button type="primary" style="margin-right: 4px;">导出装车清单</a-button>
-        <a-button type="primary" style="margin-right: 4px;">导出装箱通知书</a-button>
-        <a-button type="primary" style="margin-right: 4px;">导出报关资料</a-button>
+<!--      <a-button-group >-->
+<!--        <a-button type="primary" style="margin-right: 4px;" @click="handleExportXls('导入fba表')">导出箱单发票</a-button>-->
+<!--        <a-button type="primary" style="margin-right: 4px;">导出唛头</a-button>-->
+<!--        <a-button type="primary" style="margin-right: 4px;">导出装车清单</a-button>-->
+<!--        <a-button type="primary" style="margin-right: 4px;">导出装箱通知书</a-button>-->
+<!--        <a-button type="primary" style="margin-right: 4px;">导出报关资料</a-button>-->
+<!--      </a-button-group>-->
+      <a-button-group size="middle" style="margin-right: 4px;">
+        <a-button icon="printer">打印标签</a-button>
+        <a-button icon="edit">修改</a-button>
+        <a-dropdown >
+          <a-menu slot="overlay" @click="handleMenuClick" icon="cloud-download">
+            <a-menu-item key="1">
+              <a-icon type="cloud-download"  @click="handleExportXls('导入fba表')"/>导出发票
+            </a-menu-item>
+            <a-menu-item key="2">
+              <a-icon type="cloud-download"/>导出运单
+            </a-menu-item>
+            <a-menu-item key="3" >
+              <a-icon type="cloud-download"/>申报信息
+            </a-menu-item>
+          </a-menu>
+          <a-button><a-icon type="cloud-download"/> 下载  </a-button>
+        </a-dropdown>
+        <a-button type="danger" > <a-icon type="close" />取消运单</a-button>
       </a-button-group>
     </template>
   </page-layout>
@@ -364,7 +383,8 @@
     },
     computed: {
       title () {
-        return this.$route.query.record.fbaid
+        var title = this.$route.query.record.fbaid + '/' +this.$route.query.record.orderid + '/' + this.$route.query.record.nameSender;
+        return title;
       }
     },
 
