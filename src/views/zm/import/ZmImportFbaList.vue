@@ -804,7 +804,6 @@
         Rowclick: (record, index) => ({
           on: {
             click: () => {
-
                this.handleDetails(record);
             },
           },

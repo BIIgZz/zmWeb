@@ -25,6 +25,26 @@
       <div class="ant-alert ant-alert-info" style="margin-bottom: 16px;">
         <i class="anticon anticon-info-circle ant-alert-icon"></i> 已选择 <a style="font-weight: 600">{{ selectedRowKeys.length }}</a>项
         <a style="margin-left: 24px" @click="onClearSelected">清空</a>
+        <!--        自定义列-->
+        <span style="float:right;">
+          <a @click="loadData()"><a-icon type="sync" />刷新</a>
+          <a-divider type="vertical" />
+          <a-popover title="自定义列" trigger="click" placement="leftBottom">
+            <template slot="content">
+              <a-checkbox-group @change="onColSettingsChange" v-model="settingColumns" :defaultValue="settingColumns">
+                <a-row style="width: 400px">
+                  <template v-for="(item,index) in columns">
+                    <template v-if="item.key!='rowIndex'&& item.dataIndex!='action'">
+                        <a-col :span="12"><a-checkbox :value="item.dataIndex"><j-ellipsis :value="item.title" :length="10"></j-ellipsis></a-checkbox></a-col>
+                    </template>
+                  </template>
+                </a-row>
+              </a-checkbox-group>
+            </template>
+            <a><a-icon type="setting" />设置</a>
+          </a-popover>
+        </span>
+        <!--        自定义列 -->
       </div>
       <template>
         <div>
@@ -68,14 +88,29 @@
         rowKey="id"
         class="j-table-force-nowrap"
         :scroll="{x:true}"
-        :columns="columns"
+        :columns="defColumns"
         :dataSource="dataSource"
         :pagination="ipagination"
         :loading="loading"
         :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange, type:'radio'}"
         :customRow="clickThenSelect"
         @change="handleTableChange">
-
+        <!--        自定义列-->
+        <div slot="filterDropdown">
+          <a-card>
+            <a-checkbox-group @change="onColSettingsChange" v-model="settingColumns" :defaultValue="settingColumns">
+              <a-row style="width: 400px">
+                <template v-for="(item,index) in columns">
+                  <template v-if="item.key!='rowIndex'&& item.dataIndex!='action'">
+                    <a-col :span="12"><a-checkbox :value="item.dataIndex"><j-ellipsis :value="item.title" :length="10"></j-ellipsis></a-checkbox></a-col>
+                  </template>
+                </template>
+              </a-row>
+            </a-checkbox-group>
+          </a-card>
+        </div>
+        <a-icon slot="filterIcon" type='setting' :style="{ fontSize:'16px',color:  '#108ee9' }" />
+        <!--        自定义列-->
         <template slot="htmlSlot" slot-scope="text">
           <div v-html="text"></div>
         </template>
@@ -133,6 +168,7 @@
   import ZmPartnerList from './ZmPartnerList'
   import {initDictOptions,filterMultiDictText} from '@/components/dict/JDictSelectUtil'
   import '@/assets/less/TableExpand.less'
+  import Vue from 'vue'
 
   export default {
     name: "ZmSupplierList",
@@ -144,6 +180,10 @@
     data () {
       return {
         description: '供应商管理页面',
+        defColumns:[],
+        //列设置
+        settingColumns:[],
+        //列定义
         // 表头
         columns: [
           {
@@ -167,7 +207,10 @@
             align:"center",
             fixed:"right",
             width:147,
-            scopedSlots: { customRender: 'action' },
+            scopedSlots: {
+              filterDropdown: 'filterDropdown',
+              filterIcon: 'filterIcon',
+              customRender: 'action'},
           }
         ],
         url: {
@@ -197,7 +240,8 @@
       }
     },
     created() {
-      this.getSuperFieldList();
+      // this.getSuperFieldList();
+      this.initColumns();
     },
     computed: {
       importExcelUrl: function(){
@@ -205,6 +249,50 @@
       }
     },
     methods: {
+
+      //列设置更改事件
+      onColSettingsChange (checkedValues) {
+        var key = this.$route.name+":colsettings";
+        Vue.ls.set(key, checkedValues, 7 * 24 * 60 * 60 * 1000)
+        this.settingColumns = checkedValues;
+        const cols = this.columns.filter(item => {
+          if(item.key =='rowIndex'|| item.dataIndex=='action'){
+            return true
+          }
+          if (this.settingColumns.includes(item.dataIndex)) {
+            return true
+          }
+          return false
+        })
+        this.defColumns =  cols;
+      },
+      initColumns(){
+        //权限过滤（列权限控制时打开，修改第二个参数为授权码前缀）
+        //this.defColumns = colAuthFilter(this.defColumns,'testdemo:');
+
+        var key = this.$route.name+":colsettings";
+        let colSettings= Vue.ls.get(key);
+        if(colSettings==null||colSettings==undefined){
+          let allSettingColumns = [];
+          this.columns.forEach(function (item,i,array ) {
+            allSettingColumns.push(item.dataIndex);
+          })
+          this.settingColumns = allSettingColumns;
+          this.defColumns = this.columns;
+        }else{
+          this.settingColumns = colSettings;
+          const cols = this.columns.filter(item => {
+            if(item.key =='rowIndex'|| item.dataIndex=='action'){
+              return true;
+            }
+            if (colSettings.includes(item.dataIndex)) {
+              return true;
+            }
+            return false;
+          })
+          this.defColumns =  cols;
+        }
+      },
       initDictConfig(){
         initDictOptions('service_status').then((res) => {
           if (res.success) {

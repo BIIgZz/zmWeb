@@ -38,6 +38,7 @@
           </a-col>
         </a-row>
       </a-form>
+
     </div>
     <!-- 查询区域-END -->
 
@@ -56,6 +57,7 @@
         </a-menu>
         <a-button style="margin-left: 8px"> 批量操作 <a-icon type="down" /></a-button>
       </a-dropdown>
+
     </div>
 
     <!-- table区域-begin -->
@@ -83,22 +85,62 @@
           </a-popover>
         </span>
         <!--        自定义列 -->
-      </div>
 
+      </div>
+      <div>
+        <a-tabs default-active-key="0"  type="card" @change="searchQuery" v-model="queryParam.status">
+          <a-tab-pane key="0" tab="待订仓" @click="this.onSelectChange">
+          </a-tab-pane>
+          <a-tab-pane key="1" tab="已定仓" force-render>
+
+          </a-tab-pane>
+          <a-tab-pane key="2" tab="已出发">
+
+          </a-tab-pane>
+          <a-tab-pane key="3" tab="已到站">
+
+          </a-tab-pane>
+          <a-tab-pane key="4" tab="已清关">
+
+          </a-tab-pane>
+          <a-tab-pane key="5" tab="已完成">
+
+          </a-tab-pane>
+          <a-tab-pane key="6" tab="已作废" >
+          </a-tab-pane>
+          <a-tab-pane key="" tab="全部" >
+          </a-tab-pane>
+        </a-tabs>
+      </div>
       <a-table
         ref="table"
         size="middle"
         :scroll="{x:true}"
         bordered
         rowKey="id"
-        :columns="columns"
+        :columns="defColumns"
         :dataSource="dataSource"
         :pagination="ipagination"
         :loading="loading"
         :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
         class="j-table-force-nowrap"
         @change="handleTableChange">
-
+        <!--        自定义列-->
+        <div slot="filterDropdown">
+          <a-card>
+            <a-checkbox-group @change="onColSettingsChange" v-model="settingColumns" :defaultValue="settingColumns">
+              <a-row style="width: 400px">
+                <template v-for="(item,index) in columns">
+                  <template v-if="item.key!='rowIndex'&& item.dataIndex!='action'">
+                    <a-col :span="12"><a-checkbox :value="item.dataIndex"><j-ellipsis :value="item.title" :length="10"></j-ellipsis></a-checkbox></a-col>
+                  </template>
+                </template>
+              </a-row>
+            </a-checkbox-group>
+          </a-card>
+        </div>
+        <a-icon slot="filterIcon" type='setting' :style="{ fontSize:'16px',color:  '#108ee9' }" />
+        <!--        自定义列-->
         <template slot="htmlSlot" slot-scope="text">
           <div v-html="text"></div>
         </template>
@@ -162,18 +204,12 @@
     data () {
       return {
         description: '提单表管理页面',
+        defColumns:[],
+        //列设置
+        settingColumns:[],
         // 表头
         columns: [
-          {
-            title: '序号',
-            dataIndex: '',
-            key:'rowIndex',
-            width:60,
-            align:"center",
-            customRender:function (t,r,index) {
-              return parseInt(index)+1;
-            }
-          },
+
           {
             title:'提单号',
             align:"center",
@@ -284,7 +320,10 @@
             align:"center",
             fixed:"right",
             width:147,
-            scopedSlots: { customRender: 'action' }
+            scopedSlots: {
+              filterDropdown: 'filterDropdown',
+              filterIcon: 'filterIcon',
+              customRender: 'action'},
           }
         ],
         url: {
@@ -309,6 +348,7 @@
       },
     },
     methods: {
+
       //列设置更改事件
       onColSettingsChange (checkedValues) {
         var key = this.$route.name+":colsettings";
