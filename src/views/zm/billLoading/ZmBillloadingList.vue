@@ -88,25 +88,269 @@
 
       </div>
       <div>
-        <a-tabs default-active-key="0"  type="card" @change="searchQuery" v-model="queryParam.status">
+        <a-tabs default-active-key="0"  type="card" @change="searchQuery" v-model="queryParam.status" >
           <a-tab-pane key="0" tab="待订仓" @click="this.onSelectChange">
+            <template >
+              <div  >
+                <a-button-group size="middle">
+                  <a-button icon="check">已定仓</a-button>
+                  <a-button icon="issues-close">审计</a-button>
+                  <a-button icon="redo">反审计</a-button>
+                  <a-button icon="redo">更新统计</a-button>
+
+                  <a-dropdown >
+                    <a-menu slot="overlay" @click="handleMenuClick" icon="cloud-download">
+                      <a-menu-item key="1">
+                        <a-icon type="cloud-download"  @click="handleExportXls('导入fba表')"/>运单
+                      </a-menu-item>
+                      <a-menu-item key="2">
+                        <a-icon type="cloud-download"/>提单
+                      </a-menu-item>
+                      <a-menu-item key="3" >
+                        <a-icon type="cloud-download"/>运单
+                      </a-menu-item>
+                      <a-menu-item key="4" >
+                        <a-icon type="cloud-download"/>货箱
+                      </a-menu-item>
+                      <a-menu-item key="5" >
+                        <a-icon type="cloud-download"/>申报
+                      </a-menu-item>
+                      <a-menu-item key="5" >
+                        <a-icon type="cloud-download"/>流水
+                      </a-menu-item>
+                    </a-menu>
+                    <a-button><a-icon type="cloud-download"/> 导出  </a-button>
+                  </a-dropdown>
+                  <a-button icon="delete" type="danger">作废</a-button>
+                  <a-button icon="delete" type="danger">删除</a-button>
+
+                </a-button-group>
+              </div>
+            </template>
           </a-tab-pane>
           <a-tab-pane key="1" tab="已定仓" force-render>
+            <template >
+              <div  >
+                <a-button-group size="middle">
+                  <a-button icon="car">已出发</a-button>
+                  <a-button icon="issues-close">审计</a-button>
+                  <a-button icon="redo">反审计</a-button>
+                  <a-button icon="redo">更新统计</a-button>
 
+                  <a-dropdown >
+                    <a-menu slot="overlay" @click="handleMenuClick" icon="cloud-download">
+                      <a-menu-item key="1">
+                        <a-icon type="cloud-download"  @click="handleExportXls('导入fba表')"/>运单
+                      </a-menu-item>
+                      <a-menu-item key="2">
+                        <a-icon type="cloud-download"/>提单
+                      </a-menu-item>
+                      <a-menu-item key="3" >
+                        <a-icon type="cloud-download"/>运单
+                      </a-menu-item>
+                      <a-menu-item key="4" >
+                        <a-icon type="cloud-download"/>货箱
+                      </a-menu-item>
+                      <a-menu-item key="5" >
+                        <a-icon type="cloud-download"/>申报
+                      </a-menu-item>
+                      <a-menu-item key="5" >
+                        <a-icon type="cloud-download"/>流水
+                      </a-menu-item>
+                    </a-menu>
+                    <a-button><a-icon type="cloud-download"/> 导出  </a-button>
+                  </a-dropdown>
+                  <a-button icon="delete" type="danger">作废</a-button>
+                </a-button-group>
+              </div>
+            </template>
           </a-tab-pane>
           <a-tab-pane key="2" tab="已出发">
+            <template >
+              <div  >
+                <a-button-group size="middle">
+                  <a-button icon="bank">已到达</a-button>
+                  <a-button icon="issues-close">审计</a-button>
+                  <a-button icon="redo">反审计</a-button>
+                  <a-button icon="redo">更新统计</a-button>
 
+                  <a-dropdown >
+                    <a-menu slot="overlay" @click="handleMenuClick" icon="cloud-download">
+                      <a-menu-item key="1">
+                        <a-icon type="cloud-download"  @click="handleExportXls('导入fba表')"/>运单
+                      </a-menu-item>
+                      <a-menu-item key="2">
+                        <a-icon type="cloud-download"/>提单
+                      </a-menu-item>
+                      <a-menu-item key="3" >
+                        <a-icon type="cloud-download"/>运单
+                      </a-menu-item>
+                      <a-menu-item key="4" >
+                        <a-icon type="cloud-download"/>货箱
+                      </a-menu-item>
+                      <a-menu-item key="5" >
+                        <a-icon type="cloud-download"/>申报
+                      </a-menu-item>
+                      <a-menu-item key="5" >
+                        <a-icon type="cloud-download"/>流水
+                      </a-menu-item>
+                    </a-menu>
+                    <a-button><a-icon type="cloud-download"/> 导出  </a-button>
+                  </a-dropdown>
+                  <a-button icon="delete" type="danger">作废</a-button>
+
+                </a-button-group>
+              </div>
+            </template>
           </a-tab-pane>
           <a-tab-pane key="3" tab="已到站">
+            <template >
+              <div  >
+                <a-button-group size="middle">
+                  <a-button icon="like">已清关</a-button>
+                  <a-button icon="issues-close">审计</a-button>
+                  <a-button icon="redo">反审计</a-button>
+                  <a-button icon="redo">更新统计</a-button>
 
+                  <a-dropdown >
+                    <a-menu slot="overlay" @click="handleMenuClick" icon="cloud-download">
+                      <a-menu-item key="1">
+                        <a-icon type="cloud-download"  @click="handleExportXls('导入fba表')"/>运单
+                      </a-menu-item>
+                      <a-menu-item key="2">
+                        <a-icon type="cloud-download"/>提单
+                      </a-menu-item>
+                      <a-menu-item key="3" >
+                        <a-icon type="cloud-download"/>运单
+                      </a-menu-item>
+                      <a-menu-item key="4" >
+                        <a-icon type="cloud-download"/>货箱
+                      </a-menu-item>
+                      <a-menu-item key="5" >
+                        <a-icon type="cloud-download"/>申报
+                      </a-menu-item>
+                      <a-menu-item key="5" >
+                        <a-icon type="cloud-download"/>流水
+                      </a-menu-item>
+                    </a-menu>
+                    <a-button><a-icon type="cloud-download"/> 导出  </a-button>
+                  </a-dropdown>
+                  <a-button icon="delete" type="danger">作废</a-button>
+
+                </a-button-group>
+              </div>
+            </template>
           </a-tab-pane>
           <a-tab-pane key="4" tab="已清关">
+            <template >
+              <div  >
+                <a-button-group size="middle">
+                  <a-button icon="like">已清关</a-button>
+                  <a-button icon="issues-close">审计</a-button>
+                  <a-button icon="redo">反审计</a-button>
+                  <a-button icon="redo">更新统计</a-button>
 
+                  <a-dropdown >
+                    <a-menu slot="overlay" @click="handleMenuClick" icon="cloud-download">
+                      <a-menu-item key="1">
+                        <a-icon type="cloud-download"  @click="handleExportXls('导入fba表')"/>运单
+                      </a-menu-item>
+                      <a-menu-item key="2">
+                        <a-icon type="cloud-download"/>提单
+                      </a-menu-item>
+                      <a-menu-item key="3" >
+                        <a-icon type="cloud-download"/>运单
+                      </a-menu-item>
+                      <a-menu-item key="4" >
+                        <a-icon type="cloud-download"/>货箱
+                      </a-menu-item>
+                      <a-menu-item key="5" >
+                        <a-icon type="cloud-download"/>申报
+                      </a-menu-item>
+                      <a-menu-item key="5" >
+                        <a-icon type="cloud-download"/>流水
+                      </a-menu-item>
+                    </a-menu>
+                    <a-button><a-icon type="cloud-download"/> 导出  </a-button>
+                  </a-dropdown>
+                  <a-button icon="delete" type="danger">作废</a-button>
+
+                </a-button-group>
+              </div>
+            </template>
           </a-tab-pane>
           <a-tab-pane key="5" tab="已完成">
+            <template >
+              <div  >
+                <a-button-group size="middle">
+                  <a-button icon="issues-close">审计</a-button>
+                  <a-button icon="redo">反审计</a-button>
+                  <a-button icon="redo">更新统计</a-button>
 
+                  <a-dropdown >
+                    <a-menu slot="overlay" @click="handleMenuClick" icon="cloud-download">
+                      <a-menu-item key="1">
+                        <a-icon type="cloud-download"  @click="handleExportXls('导入fba表')"/>运单
+                      </a-menu-item>
+                      <a-menu-item key="2">
+                        <a-icon type="cloud-download"/>提单
+                      </a-menu-item>
+                      <a-menu-item key="3" >
+                        <a-icon type="cloud-download"/>运单
+                      </a-menu-item>
+                      <a-menu-item key="4" >
+                        <a-icon type="cloud-download"/>货箱
+                      </a-menu-item>
+                      <a-menu-item key="5" >
+                        <a-icon type="cloud-download"/>申报
+                      </a-menu-item>
+                      <a-menu-item key="5" >
+                        <a-icon type="cloud-download"/>流水
+                      </a-menu-item>
+                    </a-menu>
+                    <a-button><a-icon type="cloud-download"/> 导出  </a-button>
+                  </a-dropdown>
+
+                </a-button-group>
+              </div>
+            </template>
           </a-tab-pane>
           <a-tab-pane key="6" tab="已作废" >
+            <template >
+              <div  >
+                <a-button-group size="middle">
+                  <a-button icon="issues-close">审计</a-button>
+                  <a-button icon="redo">反审计</a-button>
+                  <a-button icon="redo">更新统计</a-button>
+
+                  <a-dropdown >
+                    <a-menu slot="overlay" @click="handleMenuClick" icon="cloud-download">
+                      <a-menu-item key="1">
+                        <a-icon type="cloud-download"  @click="handleExportXls('导入fba表')"/>运单
+                      </a-menu-item>
+                      <a-menu-item key="2">
+                        <a-icon type="cloud-download"/>提单
+                      </a-menu-item>
+                      <a-menu-item key="3" >
+                        <a-icon type="cloud-download"/>运单
+                      </a-menu-item>
+                      <a-menu-item key="4" >
+                        <a-icon type="cloud-download"/>货箱
+                      </a-menu-item>
+                      <a-menu-item key="5" >
+                        <a-icon type="cloud-download"/>申报
+                      </a-menu-item>
+                      <a-menu-item key="5" >
+                        <a-icon type="cloud-download"/>流水
+                      </a-menu-item>
+                    </a-menu>
+                    <a-button><a-icon type="cloud-download"/> 导出  </a-button>
+                  </a-dropdown>
+                  <a-button ><a-icon type="cloud-sync" />恢复</a-button>
+
+                </a-button-group>
+              </div>
+            </template>
           </a-tab-pane>
           <a-tab-pane key="" tab="全部" >
           </a-tab-pane>
@@ -192,7 +436,7 @@
   import '@/assets/less/TableExpand.less'
   import { mixinDevice } from '@/utils/mixin'
   import { JeecgListMixin } from '../../../mixins/JeecgListMixin'
-  import ZmBillloadingModal from './modules/ZmBillloadingModal'
+  import ZmBillloadingModal from './modules/ZmBillloadingModal__Style#Drawer'
   import Vue from 'vue'
 
   export default {
