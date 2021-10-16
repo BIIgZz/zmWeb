@@ -84,6 +84,7 @@
             <a><a-icon type="setting" />设置</a>
           </a-popover>
         </span>
+
         <!--        自定义列 -->
 
       </div>
@@ -245,7 +246,7 @@
             <template >
               <div  >
                 <a-button-group size="middle">
-                  <a-button icon="like">已清关</a-button>
+                  <a-button icon="like">已完成</a-button>
                   <a-button icon="issues-close">审计</a-button>
                   <a-button icon="redo">反审计</a-button>
                   <a-button icon="redo">更新统计</a-button>
@@ -369,6 +370,7 @@
         :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
         class="j-table-force-nowrap"
         @change="handleTableChange">
+        <a slot="billNum" slot-scope="text">{{ text }}</a>
         <!--        自定义列-->
         <div slot="filterDropdown">
           <a-card>
@@ -413,7 +415,10 @@
             <a class="ant-dropdown-link">更多 <a-icon type="down" /></a>
             <a-menu slot="overlay">
               <a-menu-item>
-                <a @click="handleDetail(record)">详情</a>
+                <a @click="handleBillDetails(record)">详情</a>
+              </a-menu-item>
+              <a-menu-item>
+                <a @click="detail(record)">test</a>
               </a-menu-item>
               <a-menu-item>
                 <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
@@ -426,6 +431,35 @@
 
       </a-table>
     </div>
+    <div>
+      <a-button type="primary" @click="showDrawer">
+        Open
+      </a-button>
+      <a-drawer
+        title="详情"
+        placement="right"
+        :closable="false"
+        :width="720"
+        :visible="visible"
+        :after-visible-change="afterVisibleChange"
+        @close="onClose"
+      >
+        <div class="title">退货进度</div>
+        
+        <s-table
+          style="margin-bottom: 24px"
+          :columns="scheduleColumns"
+          :data="loadScheduleData">
+
+          <template
+            slot="status"
+            slot-scope="status">
+            <a-badge :status="status" :text="status | statusFilter"/>
+          </template>
+
+        </s-table>
+      </a-drawer>
+    </div>
 
     <zm-billloading-modal ref="modalForm" @ok="modalFormOk"></zm-billloading-modal>
   </a-card>
@@ -437,13 +471,15 @@
   import { mixinDevice } from '@/utils/mixin'
   import { JeecgListMixin } from '../../../mixins/JeecgListMixin'
   import ZmBillloadingModal from './modules/ZmBillloadingModal__Style#Drawer'
+  import ZmBillloadingDetail from './modules/billLoadingDetail'
   import Vue from 'vue'
 
   export default {
     name: 'ZmBillloadingList',
     mixins:[JeecgListMixin, mixinDevice],
     components: {
-      ZmBillloadingModal
+      ZmBillloadingModal,
+
     },
     data () {
       return {
@@ -451,13 +487,18 @@
         defColumns:[],
         //列设置
         settingColumns:[],
+
+        visible: false,
+
         // 表头
         columns: [
 
           {
             title:'提单号',
             align:"center",
-            dataIndex: 'billnum'
+            dataIndex: 'billnum',
+            scopedSlots: { customRender: 'billNum' },
+            customCell:this.cellClick
           },
           {
             title:'类型',
@@ -580,6 +621,88 @@
         },
         dictOptions:{},
         superFieldList:[],
+        scheduleColumns: [
+          {
+            title: '时间',
+            dataIndex: 'time',
+            key: 'time'
+          },
+          {
+            title: '当前进度',
+            dataIndex: 'rate',
+            key: 'rate'
+          },
+          {
+            title: '状态',
+            dataIndex: 'status',
+            key: 'status',
+            scopedSlots: { customRender: 'status' },
+          },
+          {
+            title: '操作员ID',
+            dataIndex: 'operator',
+            key: 'operator'
+          },
+          {
+            title: '耗时',
+            dataIndex: 'cost',
+            key: 'cost'
+          }
+        ],
+        loadScheduleData: () => {
+          return new Promise((resolve => {
+            resolve({
+              data: [
+                {
+                  key: '1',
+                  time: '2017-10-01 14:10',
+                  rate: '联系客户',
+                  status: 'processing',
+                  operator: '取货员 ID1234',
+                  cost: '5mins'
+                },
+                {
+                  key: '2',
+                  time: '2017-10-01 14:05',
+                  rate: '取货员出发',
+                  status: 'success',
+                  operator: '取货员 ID1234',
+                  cost: '1h'
+                },
+                {
+                  key: '3',
+                  time: '2017-10-01 13:05',
+                  rate: '取货员接单',
+                  status: 'success',
+                  operator: '取货员 ID1234',
+                  cost: '5mins'
+                },
+                {
+                  key: '4',
+                  time: '2017-10-01 13:00',
+                  rate: '申请审批通过',
+                  status: 'success',
+                  operator: '系统',
+                  cost: '1h'
+                },
+                {
+                  key: '5',
+                  time: '2017-10-01 12:00',
+                  rate: '发起退货申请',
+                  status: 'success',
+                  operator: '用户',
+                  cost: '5mins'
+                }
+              ],
+              pageSize: 10,
+              pageNo: 1,
+              totalPage: 1,
+              totalCount: 10
+            })
+          })).then(res => {
+            return res
+          })
+        },
       }
     },
     created() {
@@ -591,8 +714,34 @@
         return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`;
       },
     },
+
     methods: {
 
+      afterVisibleChange(val) {
+        console.log('visible', val);
+      },
+      showDrawer(record) {
+        this.visible = true;
+      },
+      onClose() {
+        this.visible = false;
+      },
+
+
+
+      //单元格点击事件
+      cellClick(record) {
+        return {
+          style: {
+            // 'color': 'blue', //这里将名称变了下色
+          },
+          on: {
+            click: () => { //点击事件，也可以加其他事件
+              this.showDrawer(record);
+            }
+          }
+        }
+      },
       //列设置更改事件
       onColSettingsChange (checkedValues) {
         var key = this.$route.name+":colsettings";
@@ -661,7 +810,17 @@
         fieldList.push({type:'date',value:'customsClearanceTime',text:'清关时间'})
         this.superFieldList = fieldList
       }
-    }
+    },
+    filters: {
+      statusFilter(status) {
+        const statusMap = {
+          'processing': '进行中',
+          'success': '完成',
+          'failed': '失败'
+        }
+        return statusMap[status]
+      }
+    },
   }
 </script>
 <style scoped>

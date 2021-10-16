@@ -267,11 +267,15 @@ export const JeecgListMixin = {
     handleDetails:function(record){
       this.$router.push({path: '/profile/basic',query:{record: record}})
     },
+    handleBillDetails:function(record){
+      this.$router.push({path: '/zm/billLoading/modules/billLoadingDetail',query:{record: record}})
+    },
     handleDetail:function(record){
       this.$refs.modalForm.edit(record);
       this.$refs.modalForm.title="详情";
       this.$refs.modalForm.disableSubmit = true;
     },
+
     /* 导出 */
     handleExportXls2(){
       let paramsStr = encodeURI(JSON.stringify(this.getQueryParams()));
