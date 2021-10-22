@@ -92,7 +92,7 @@ export const JeecgListMixin = {
       this.loading = true;
       getAction(this.url.list, params).then((res) => {
         if (res.success) {
-          //update-begin---author:zhangyafei    Date:20201118  for：适配不分页的数据列表------------
+
           this.dataSource = res.result.records||res.result;
           if(res.result.total)
           {
@@ -100,7 +100,7 @@ export const JeecgListMixin = {
           }else{
             this.ipagination.total = 0;
           }
-          //update-end---author:zhangyafei    Date:20201118  for：适配不分页的数据列表------------
+
         }
         if(res.code===510){
           this.$message.warning(res.message)
@@ -238,6 +238,11 @@ export const JeecgListMixin = {
       this.$refs.modalForm.add();
       this.$refs.modalForm.title = "新增";
       this.$refs.modalForm.disableSubmit = false;
+    },
+    addMsg: function (billDtail) {
+      this.$refs.modalLogisticeMsg.add(billDtail);
+      this.$refs.modalLogisticeMsg.title = "新增";
+      this.$refs.modalLogisticeMsg.disableSubmit = false;
     },
     handleTableChange(pagination, filters, sorter) {
       //分页、排序、筛选变化时触发

@@ -431,37 +431,207 @@
 
       </a-table>
     </div>
-    <div>
-      <a-button type="primary" @click="showDrawer">
-        Open
-      </a-button>
+    <div >
       <a-drawer
-        title="详情"
         placement="right"
+        :width="1280"
         :closable="false"
-        :width="720"
         :visible="visible"
         :after-visible-change="afterVisibleChange"
         @close="onClose"
       >
-        <div class="title">退货进度</div>
-        
-        <s-table
-          style="margin-bottom: 24px"
-          :columns="scheduleColumns"
-          :data="loadScheduleData">
 
-          <template
-            slot="status"
-            slot-scope="status">
-            <a-badge :status="status" :text="status | statusFilter"/>
+        <a-card :bordered="false" :title="title">
+          <div style="position:absolute ;right: 50px ;top: 10px" >
+            <a-button-group size="middle"  style="margin-right: 20px" >
+              <a-button icon="printer">打印标签</a-button>
+              <a-button icon="edit">修改</a-button>
+              <a-dropdown >
+                <a-menu slot="overlay" @click="handleMenuClick" icon="cloud-download">
+                  <a-menu-item key="1">
+                    <a-icon type="cloud-download"  @click="handleExportXls('导入fba表')"/>导出发票
+                  </a-menu-item>
+                  <a-menu-item key="2">
+                    <a-icon type="cloud-download"/>导出运单
+                  </a-menu-item>
+                  <a-menu-item key="3" >
+                    <a-icon type="cloud-download"/>申报信息
+                  </a-menu-item>
+                </a-menu>
+                <a-button><a-icon type="cloud-download"/> 下载  </a-button>
+              </a-dropdown>
+            </a-button-group>
+          </div>
+            <detail-list title="基础信息">
+              <detail-list-item term="类型">{{billDtail.type}}</detail-list-item>
+              <detail-list-item term="提单号">{{billDtail.billnum}}</detail-list-item>
+              <detail-list-item term="柜号">{{billDtail.billnum}}</detail-list-item>
+              <detail-list-item term="船号">{{billDtail.billnum}}</detail-list-item>
+              <detail-list-item term="集装箱规格">{{billDtail.billnum}}</detail-list-item>
+              <detail-list-item term="供应商">{{billDtail.arriage}}</detail-list-item>
+              <detail-list-item term="承运商">{{billDtail.arriage}}</detail-list-item>
+              <detail-list-item term="出发地址">{{billDtail.line}}</detail-list-item>
+              <detail-list-item term="发往地点">{{billDtail.line}}</detail-list-item>
+              <detail-list-item term="出发国家">{{billDtail.billnum}}</detail-list-item>
+              <detail-list-item term="发往国家">{{billDtail.billnum}}</detail-list-item>
+              <detail-list-item term="报关代理">{{billDtail.billnum}}</detail-list-item>
+              <detail-list-item term="清关代理">{{billDtail.billnum}}</detail-list-item>
+              <detail-list-item term="单独清关">{{billDtail.billnum}}</detail-list-item>
+              <detail-list-item term="参考号">{{billDtail.billnum}}</detail-list-item>
+              <detail-list-item term="出发时间">{{billDtail.departure}}</detail-list-item>
+              <detail-list-item term="到达时间">{{billDtail.arrive}}</detail-list-item>
+              <detail-list-item term="清关时间">{{billDtail.customsClearanceTime}}</detail-list-item>
+              <detail-list-item term="备注">{{billDtail.remark}}</detail-list-item>
+              <detail-list-item term="内部备注">{{billDtail.inRemark}}</detail-list-item>
+              <detail-list-item term="装柜顺序">{{billDtail.billnum}}</detail-list-item>
+              <detail-list-item term="提单创建时间">{{billDtail.createTime}}</detail-list-item>
+
+            </detail-list>
+          <a-divider style="margin-bottom: 32px"/>
+          <div class="title">退货进度</div>
+          <a-button icon="add" style="position: relative ;bottom: 40px;left: 900px " @click="addMsg(billDtail)">添加</a-button>
+            <s-table
+              style="margin-bottom: 24px"
+              :columns="scheduleColumns"
+              :data="loadScheduleData">
+
+              <template
+                slot="status"
+                slot-scope="status">
+                <a-badge :status="status" :text="status | statusFilter"/>
+              </template>
+
+            </s-table>
+            <a-divider style="margin-bottom: 32px"/>
+            <detail-list title="收件人信息">
+              <detail-list-item term="用户姓名">0</detail-list-item>
+              <detail-list-item term="联系电话">0</detail-list-item>
+              <detail-list-item term="联系邮箱">0</detail-list-item>
+              <detail-list-item term="邮编">0</detail-list-item>
+              <detail-list-item term="国家代码(二字代码)">0</detail-list-item>
+              <detail-list-item term="省份/州*(二字代码)">0</detail-list-item>
+              <detail-list-item term="城市">	0</detail-list-item>
+              <detail-list-item term="收件地址">	0</detail-list-item>
+              <detail-list-item term="PO Numbe">	123456</detail-list-item>
+              <detail-list-item term="箱数">	12</detail-list-item>
+            </detail-list>
+            <a-divider style="margin-bottom: 32px"/>
+            <detail-list title="发货人信息">
+              <detail-list-item term="用户姓名">0</detail-list-item>
+              <detail-list-item term="联系电话">0</detail-list-item>
+              <detail-list-item term="联系邮箱">0</detail-list-item>
+              <detail-list-item term="邮编">0</detail-list-item>
+              <detail-list-item term="国家代码(二字代码)">0</detail-list-item>
+              <detail-list-item term="省份/州*(二字代码)">0</detail-list-item>
+              <detail-list-item term="城市">0</detail-list-item>
+              <detail-list-item term="收件地址">0</detail-list-item>
+              <detail-list-item term="创建人">	0</detail-list-item>
+            </detail-list>
+            <a-divider style="margin-bottom: 32px"/>
+            <detail-list title="订单特性">
+              <detail-list-item term="带电">0</detail-list-item>
+              <detail-list-item term="带磁">0</detail-list-item>
+              <detail-list-item term="液体">0</detail-list-item>
+              <detail-list-item term="粉末">0</detail-list-item>
+              <detail-list-item term="危险品">0</detail-list-item>
+              <detail-list-item term="参考号二">0</detail-list-item>
+              <detail-list-item term="备注">0</detail-list-item>
+            </detail-list>
+            <a-divider style="margin-bottom: 32px"/>
+
+
+            <div class="title">货箱详情</div>
+            <s-table
+              style="margin-bottom: 24px"
+              rowKey="id"
+              :columns="columns"
+              :data="dataSource">
+              <template slot="imgSlot" slot-scope="text">
+                <span v-if="!text" style="font-size: 12px;font-style: italic;">无图片</span>
+                <img v-else :src="getImgView(text)" height="25px" alt="" style="max-width:80px;font-size: 12px;font-style: italic;"/>
+              </template>
+
+            </s-table>
+
+
+          </a-card>
+
+          <template slot="action" >
+            <a-button-group size="middle"   >
+              <a-button icon="printer">打印标签</a-button>
+              <a-button icon="edit">修改</a-button>
+              <a-dropdown >
+                <a-menu slot="overlay" @click="handleMenuClick" icon="cloud-download">
+                  <a-menu-item key="1">
+                    <a-icon type="cloud-download"  @click="handleExportXls('导入fba表')"/>导出发票
+                  </a-menu-item>
+                  <a-menu-item key="2">
+                    <a-icon type="cloud-download"/>导出运单
+                  </a-menu-item>
+                  <a-menu-item key="3" >
+                    <a-icon type="cloud-download"/>申报信息
+                  </a-menu-item>
+                </a-menu>
+                <a-button><a-icon type="cloud-download"/> 下载  </a-button>
+              </a-dropdown>
+            </a-button-group>
           </template>
 
-        </s-table>
+        <template>
+
+            <a-card :bordered="false">
+              <detail-list title="退款申请">
+                <detail-list-item term="取货单号">1000000000</detail-list-item>
+                <detail-list-item term="状态">已取货</detail-list-item>
+                <detail-list-item term="销售单号">1234123421</detail-list-item>
+                <detail-list-item term="子订单">3214321432</detail-list-item>
+              </detail-list>
+              <a-divider style="margin-bottom: 32px"/>
+              <detail-list title="用户信息">
+                <detail-list-item term="用户姓名">付小小</detail-list-item>
+                <detail-list-item term="联系电话">18100000000</detail-list-item>
+                <detail-list-item term="常用快递">菜鸟仓储</detail-list-item>
+                <detail-list-item term="取货地址">浙江省杭州市西湖区万塘路18号</detail-list-item>
+                <detail-list-item term="备注">	无</detail-list-item>
+              </detail-list>
+              <a-divider style="margin-bottom: 32px"/>
+
+              <div class="title">退货商品</div>
+              <s-table
+                style="margin-bottom: 24px"
+                :columns="goodsColumns"
+                :dataSource="dataSource"
+                >
+
+              </s-table>
+
+              <div class="title">退货进度</div>
+              <s-table
+                style="margin-bottom: 24px"
+                :columns="scheduleColumns"
+                :data="loadScheduleData">
+
+                <template
+                  slot="status"
+                  slot-scope="status">
+                  <a-badge :status="status" :text="status | statusFilter"/>
+                </template>
+
+              </s-table>
+            </a-card>
+
+        </template>
+
+        <template>
+          <a-table :columns="columns" :dataSource="dataSource">
+            <a slot="name" slot-scope="text">{{ text }}</a>
+          </a-table>
+        </template>
       </a-drawer>
     </div>
 
     <zm-billloading-modal ref="modalForm" @ok="modalFormOk"></zm-billloading-modal>
+    <zm-logistics-information-modal ref="modalLogisticeMsg" @ok="modalFormOk"></zm-logistics-information-modal>
   </a-card>
 </template>
 
@@ -473,16 +643,28 @@
   import ZmBillloadingModal from './modules/ZmBillloadingModal__Style#Drawer'
   import ZmBillloadingDetail from './modules/billLoadingDetail'
   import Vue from 'vue'
+  import PageLayout from '@/components/page/PageLayout'
+  import STable from '@/components/table/'
+  import DetailList from '@/components/tools/DetailList'
+  import ABadge from "ant-design-vue/es/badge/Badge"
+  import ZmLogisticsInformationModal from './modules/ZmLogisticsInformationModal'
+  const DetailListItem = DetailList.Item
 
   export default {
     name: 'ZmBillloadingList',
     mixins:[JeecgListMixin, mixinDevice],
     components: {
       ZmBillloadingModal,
-
+      ZmLogisticsInformationModal,
+      PageLayout,
+      ABadge,
+      DetailList,
+      DetailListItem,
+      STable
     },
     data () {
       return {
+        billDtail:{},
         description: '提单表管理页面',
         defColumns:[],
         //列设置
@@ -611,6 +793,41 @@
               customRender: 'action'},
           }
         ],
+        goodsColumns: [
+          {
+            title: '商品编号',
+            dataIndex: 'id',
+            key: 'id'
+          },
+          {
+            title: '商品名称',
+            dataIndex: 'name',
+            key: 'name'
+          },
+          {
+            title: '商品条码',
+            dataIndex: 'barcode',
+            key: 'barcode'
+          },
+          {
+            title: '单价',
+            dataIndex: 'price',
+            key: 'price',
+            align: 'right'
+          },
+          {
+            title: '数量（件）',
+            dataIndex: 'num',
+            key: 'num',
+            align: 'right'
+          },
+          {
+            title: '金额',
+            dataIndex: 'amount',
+            key: 'amount',
+            align: 'right'
+          }
+        ],
         url: {
           list: "/zmexpress/zmBillloading/list",
           delete: "/zmexpress/zmBillloading/delete",
@@ -621,6 +838,54 @@
         },
         dictOptions:{},
         superFieldList:[],
+        // 加载数据方法 必须为 Promise 对象
+        loadGoodsData: () => {
+          return new Promise((resolve => {
+            resolve({
+              data: [
+                {
+                  id: '1234561',
+                  name: '矿泉水 550ml',
+                  barcode: '12421432143214321',
+                  price: '2.00',
+                  num: '1',
+                  amount: '2.00'
+                },
+                {
+                  id: '1234562',
+                  name: '凉茶 300ml',
+                  barcode: '12421432143214322',
+                  price: '3.00',
+                  num: '2',
+                  amount: '6.00'
+                },
+                {
+                  id: '1234563',
+                  name: '好吃的薯片',
+                  barcode: '12421432143214323',
+                  price: '7.00',
+                  num: '4',
+                  amount: '28.00'
+                },
+                {
+                  id: '1234564',
+                  name: '特别好吃的蛋卷',
+                  barcode: '12421432143214324',
+                  price: '8.50',
+                  num: '3',
+                  amount: '25.50'
+                }
+              ],
+              pageSize: 10,
+              pageNo: 1,
+              totalPage: 1,
+              totalCount: 10
+            })
+          })).then(res => {
+            return res
+          })
+        },
+
         scheduleColumns: [
           {
             title: '时间',
@@ -647,6 +912,24 @@
             title: '耗时',
             dataIndex: 'cost',
             key: 'cost'
+          },
+          {
+            title:'物流信息',
+            align:"center",
+            dataIndex: 'msg'
+          },
+          {
+            title:'备注',
+            align:"center",
+            dataIndex: 'remark'
+          },
+          {
+            title: '操作',
+            dataIndex: 'action',
+            align:"center",
+            fixed:"right",
+            width:147,
+            scopedSlots: { customRender: 'action' }
           }
         ],
         loadScheduleData: () => {
@@ -705,14 +988,29 @@
         },
       }
     },
+
     created() {
      // this.getSuperFieldList();
       this.initColumns();
+    },
+    filters: {
+      statusFilter(status) {
+        const statusMap = {
+          'processing': '进行中',
+          'success': '完成',
+          'failed': '失败'
+        }
+        return statusMap[status]
+      }
     },
     computed: {
       importExcelUrl: function(){
         return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`;
       },
+      title () {
+        var title = this.billDtail.billnum + '/' +this.billDtail.arriage + '/' ;
+        return title;
+      }
     },
 
     methods: {
@@ -722,6 +1020,10 @@
       },
       showDrawer(record) {
         this.visible = true;
+        console.log(record);
+
+        this.billDtail = record;
+        console.log(record.billnum);
       },
       onClose() {
         this.visible = false;
@@ -811,18 +1113,18 @@
         this.superFieldList = fieldList
       }
     },
-    filters: {
-      statusFilter(status) {
-        const statusMap = {
-          'processing': '进行中',
-          'success': '完成',
-          'failed': '失败'
-        }
-        return statusMap[status]
-      }
-    },
+
   }
 </script>
 <style scoped>
   @import '~@assets/less/common.less';
+  .title {
+    color: rgba(0,0,0,.85);
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+  .my_drawer {
+    width: 500px;
+  }
 </style>
