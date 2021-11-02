@@ -834,7 +834,7 @@
           deleteBatch: "/zmexpress/zmBillloading/deleteBatch",
           exportXlsUrl: "/zmexpress/zmBillloading/exportXls",
           importExcelUrl: "zmexpress/zmBillloading/importExcel",
-
+          msg: "/zmexpress/zmLogisticsInformation/queryById",
         },
         dictOptions:{},
         superFieldList:[],
