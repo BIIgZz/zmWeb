@@ -42,6 +42,11 @@
           this.$refs.realForm.edit(record);
         })
       },
+      change (record) {
+        this.$http.paut('/zmexpress/zmImportFba/change',record).then((response) =>{
+            console.log(response);
+        })
+      },
       close () {
         this.$emit('close');
         this.visible = false;

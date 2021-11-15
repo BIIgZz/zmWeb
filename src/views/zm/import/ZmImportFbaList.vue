@@ -143,7 +143,7 @@
                         </a-menu>
                         <a-button><a-icon type="cloud-download"/> 导出  </a-button>
                       </a-dropdown>
-                      <a-button type="danger" > <a-icon type="close" />取消</a-button>
+                      <a-button type="danger" @click="change" key='0' > <a-icon type="close" />取消</a-button>
                     </a-button-group>
                   </div>
                 </template>
@@ -551,7 +551,7 @@
                 <a @click="handleDetails(record)">详情</a>
               </a-menu-item>
               <a-menu-item>
-                <a @click="handleDetails(record)">拦截/问题件</a>
+                <a @click="changeStatus(record)">拦截/问题件</a>
               </a-menu-item>
               <a-menu-item>
                 <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
@@ -830,6 +830,14 @@
       }
     },
     methods: {
+
+      //取消订单
+      cancelOrder: function(record,){
+        this.$http.put('/zmexpress/zmImportFba/change',record).then((response) =>{
+          console.log(response);
+        })
+      },
+
       //单元格点击事件
       cellClick(record) {
         return {

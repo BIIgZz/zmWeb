@@ -365,7 +365,7 @@
             return res.result;
           }
         })
-        console.log(this.dataList)
+
       },
       show(){
          console.log(this.dataList)

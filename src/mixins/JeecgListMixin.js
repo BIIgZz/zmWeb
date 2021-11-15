@@ -9,6 +9,7 @@ import Vue from 'vue'
 import { ACCESS_TOKEN, TENANT_ID } from "@/store/mutation-types"
 import store from '@/store'
 import {Modal} from 'ant-design-vue'
+import ZmImportFbaModal from '../views/zm/import/modules/ZmImportFbaModal'
 
 export const JeecgListMixin = {
   data(){
@@ -177,6 +178,7 @@ export const JeecgListMixin = {
         var ids = "";
         for (var a = 0; a < this.selectedRowKeys.length; a++) {
           ids += this.selectedRowKeys[a] + ",";
+          console.log(ids);
         }
         var that = this;
         this.$confirm({
@@ -201,6 +203,40 @@ export const JeecgListMixin = {
         });
       }
     },
+
+    change: function() {
+        if (this.selectedRowKeys.length <= 0) {
+          this.$message.warning('请选择一条记录！');
+          return;
+        } else {
+          var ids = "";
+          for (var a = 0; a < this.selectedRowKeys.length; a++) {
+            ids += this.selectedRowKeys[a] + ",";
+            console.log(ids);
+          }
+          var that = this;
+          this.$confirm({
+            title: "确认修改",
+            content: "是否修改选中数据?",
+            onOk: function() {
+              that.loading = true;
+              saveService( { ids: ids }).then((res) => {
+                if (res.success) {
+                  //重新计算分页问题
+                  that.reCalculatePage(that.selectedRowKeys.length)
+                  that.$message.success(res.message);
+                  that.loadData();
+                  that.onClearSelected();
+                } else {
+                  that.$message.warning(res.message);
+                }
+              }).finally(() => {
+                that.loading = false;
+              });
+            }
+          });
+        }
+      },
     handleDelete: function (id) {
       if(!this.url.delete){
         this.$message.error("请设置url.delete属性!")
@@ -243,6 +279,11 @@ export const JeecgListMixin = {
       this.$refs.modalLogisticeMsg.add(billDtail);
       this.$refs.modalLogisticeMsg.title = "新增";
       this.$refs.modalLogisticeMsg.disableSubmit = false;
+    },
+    changeStatus: function (record) {
+      this.$refs.modalForm.change(record);
+      this.$refs.modalForm.title = "修改";
+      this.$refs.modalForm.disableSubmit = false;
     },
     handleTableChange(pagination, filters, sorter) {
       //分页、排序、筛选变化时触发
