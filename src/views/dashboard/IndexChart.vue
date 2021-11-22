@@ -81,7 +81,7 @@
                 <bar title="销售额排行" :dataSource="barData"/>
               </a-col>
               <a-col :xl="8" :lg="12" :md="12" :sm="24" :xs="24">
-                <rank-list title="门店销售排行榜" :list="rankList"/>
+                <rank-list title="档口销售排行榜" :list="rankList"/>
               </a-col>
             </a-row>
           </a-tab-pane>
@@ -153,7 +153,7 @@
   const rankList = []
   for (let i = 0; i < 7; i++) {
     rankList.push({
-      name: '白鹭岛 ' + (i+1) + ' 号店',
+      name: '长沙 ' + (i+1) + ' 号店',
       total: 1234.56 - i * 100
     })
   }

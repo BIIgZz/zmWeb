@@ -109,8 +109,8 @@ export function getPermissions(parameter) {
 // id != 0 update  put
 export function saveService(parameter) {
   return axios({
-    url: api.service,
-    method: parameter.id == 0 ? 'post' : 'put',
+    url: '/zmexpress/zmImportFba/change',
+    method: 'put',
     data: parameter
   })
 }

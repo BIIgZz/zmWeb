@@ -88,20 +88,6 @@
 
       <!-- 查询区域 -->
       <div class="table-page-search-wrapper">
-<!--        <a-form layout="inline" @keyup.enter.native="searchQuery">-->
-<!--          <a-row :gutter="12">-->
-<!--            <a-col :xl="6" :lg="7" :md="8" :sm="12">-->
-<!--              <a-form-item label="状态"  >-->
-<!--                <j-search-select-tag placeholder="全部" v-model="queryParam.status" dict="order_status" @change="searchQuery" />-->
-<!--              </a-form-item>-->
-<!--            </a-col>-->
-<!--            <a-col :xl="6" :lg="7" :md="8" :sm="12">-->
-<!--              <a-form-item label="共计"  >-->
-<!--                <span>{{this.ipagination.total}}  单</span>-->
-<!--              </a-form-item>-->
-<!--            </a-col>-->
-<!--          </a-row>-->
-<!--        </a-form>-->
         <template>
           <div>
             <a-tabs default-active-key="0"  type="card" @change="searchQuery"     v-model="queryParam.status">
