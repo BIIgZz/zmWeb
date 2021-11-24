@@ -8,12 +8,12 @@
         <a-row :gutter="24">
           <a-col :xl="6" :lg="7" :md="8" :sm="12">
             <a-form-item label="FBA ID">
-              <a-input placeholder="请输入FBA ID" v-model="queryParam.fbaid"></a-input>
+              <j-input placeholder="请输入FBA ID,可模糊查询" v-model="queryParam.fbaid"></j-input>
             </a-form-item>
           </a-col>
           <a-col :xl="6" :lg="7" :md="8" :sm="12">
             <a-form-item label="客户订单号">
-              <a-input placeholder="请输入客户订单号" v-model="queryParam.orderid"></a-input>
+              <j-input placeholder="请输入客户订单号" v-model="queryParam.orderid"></j-input>
             </a-form-item>
           </a-col>
           <template v-if="toggleSearchStatus">
@@ -561,13 +561,15 @@
   import ZmImportFbaModal from './modules/ZmImportFbaModal'
   import {filterMultiDictText} from '@/components/dict/JDictSelectUtil'
   import '@/assets/less/TableExpand.less'
+  import JInput from '../../../components/jeecg/JInput'
   import Vue from 'vue'
 
   export default {
     name: "ZmImportFbaList",
     mixins:[JeecgListMixin],
     components: {
-      ZmImportFbaModal
+      ZmImportFbaModal,
+      JInput
     },
     data () {
       return {
