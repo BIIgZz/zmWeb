@@ -74,31 +74,7 @@
               <a-input-number v-model="model.caseNumber" placeholder="请输入总箱数" style="width: 100%" />
             </a-form-model-item>
           </a-col>
-          <a-col :span="6" >
-            <a-form-model-item label="是否带电" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="electrical">
-              <j-dict-select-tag type="list" v-model="model.electrical" dictCode="judgment" placeholder="请选择是否带电" />
-            </a-form-model-item>
-          </a-col>
-          <a-col :span="6" >
-            <a-form-model-item label="是否带磁性" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="magnetic">
-              <j-dict-select-tag type="list" v-model="model.magnetic" dictCode="judgment" placeholder="请选择是否带磁性" />
-            </a-form-model-item>
-          </a-col>
-          <a-col :span="6" >
-            <a-form-model-item label="是否是液体" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="liquid">
-              <j-dict-select-tag type="list" v-model="model.liquid" dictCode="judgment" placeholder="请选择是否是液体" />
-            </a-form-model-item>
-          </a-col>
-          <a-col :span="6" >
-            <a-form-model-item label="是否粉末" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="powder">
-              <j-dict-select-tag type="list" v-model="model.powder" dictCode="judgment" placeholder="请选择是否粉末" />
-            </a-form-model-item>
-          </a-col>
-          <a-col :span="6" >
-            <a-form-model-item label="是否是危险品" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="dangerous">
-              <j-dict-select-tag type="list" v-model="model.dangerous" dictCode="judgment" placeholder="请选择是否是危险品" />
-            </a-form-model-item>
-          </a-col>
+
           <a-col :span="6" >
             <a-form-model-item label="报关方式" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="customsEclaration">
               <j-dict-select-tag type="list" v-model="model.customsEclaration" dictCode="customs_eclaration" placeholder="请选择报关方式" />
@@ -146,7 +122,8 @@
           </a-col>
           <a-col :span="6" >
             <a-form-model-item label="发件人姓名" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="nameSender">
-              <a-input v-model="model.nameSender" placeholder="请输入发件人姓名" ></a-input>
+
+              <j-dict-select-tag type="list" v-model="model.nameSender" dictCode="zm_client_main,username,username" placeholder="请选择客户名称" />
             </a-form-model-item>
           </a-col>
           <a-col :span="6" >
@@ -185,7 +162,35 @@
             </a-form-model-item>
           </a-col>
         </a-row>
+        <a-row>
+          <a-col :span="4"  >
+            <a-form-model-item label="带电" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="electrical">
+              <j-switch v-model="model.electrical"  ></j-switch>
+            </a-form-model-item>
+          </a-col>
+          <a-col :span="4">
+            <a-form-model-item label="磁性" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="magnetic">
+              <j-switch v-model="model.magnetic"  ></j-switch>
+            </a-form-model-item>
+          </a-col>
+          <a-col :span="4" >
+            <a-form-model-item label="液体" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="liquid">
+              <j-switch v-model="model.liquid"  ></j-switch>
+            </a-form-model-item>
+          </a-col>
+          <a-col :span="4" pull='3'>
+            <a-form-model-item label="粉末" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="powder">
+              <j-switch v-model="model.powder"  ></j-switch>
+            </a-form-model-item>
+          </a-col>
+          <a-col :span="4 " pull='3'>
+            <a-form-model-item label="危险品" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="dangerous">
+              <j-switch v-model="model.dangerous"  ></j-switch>
+            </a-form-model-item>
+          </a-col>
+        </a-row>
       </a-form-model>
+
     </j-form-container>
       <!-- 子表单区域 -->
     <a-tabs v-model="activeKey" @change="handleChangeTabs">
