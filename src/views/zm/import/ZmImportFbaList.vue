@@ -475,6 +475,7 @@
         :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
         @change="handleTableChange">
         <a slot="name" slot-scope="text">{{ text }}</a>
+        <a slot="httpurl" slot-scope="text">{{ text }}</a>
         <!--        自定义列-->
         <div slot="filterDropdown">
           <a-card>
@@ -604,7 +605,9 @@
             title:'客户订单号',
             sorter: true,
             align:"center",
-            dataIndex: 'orderid'
+            dataIndex: 'orderid',
+            scopedSlots: { customRender: 'httpurl' },
+            customCell:this.cellClick2
           },
           {
             title:'服务',
@@ -835,6 +838,19 @@
           on: {
             click: () => { //点击事件，也可以加其他事件
               this.handleDetails(record);
+            }
+          }
+        }
+      },
+      //单元格点击事件
+      cellClick2(record) {
+        return {
+          style: {
+            // 'color': 'blue', //这里将名称变了下色
+          },
+          on: {
+            click: () => { //点击事件，也可以加其他事件
+              this.$router.push({path: '/profile/advanced',query:{record: record}})
             }
           }
         }
