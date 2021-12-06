@@ -559,6 +559,7 @@
 <script>
 
   import { JeecgListMixin } from '../../../mixins/JeecgListMixin'
+  // import ZmImportFbaModal from './modules/ZmImportFbaModal#Drawer'
   import ZmImportFbaModal from './modules/ZmImportFbaModal'
   import {filterMultiDictText} from '@/components/dict/JDictSelectUtil'
   import '@/assets/less/TableExpand.less'
@@ -594,7 +595,7 @@
             }
           },
           {
-            title:'FBA ID',
+            title:'运单号',
             align:"center",
             sorter: true,
             dataIndex: 'fbaid',
@@ -615,55 +616,55 @@
             dataIndex: 'serviceId'
           },
           {
-            title:'地址库编码',
+            title:'客户公司',
             align:"center",
-            dataIndex: 'code'
+            dataIndex: 'companySender'
           },
           {
-            title:'收件人姓名',
+            title:'客户姓名',
             align:"center",
-            sorter: true,
-            dataIndex: 'name'
+            dataIndex: 'nameSender'
           },
           {
-            title:'收件人公司',
+            title:'客户电话',
             align:"center",
-            dataIndex: 'company'
+            dataIndex: 'telSender'
           },
           {
-            title:'收件人地址',
+            title:'客户邮箱',
             align:"center",
-            dataIndex: 'address'
+            dataIndex: 'emailSender'
           },
           {
-            title:'收件人城市',
+            title:'客户地址',
             align:"center",
-            dataIndex: 'city'
+            dataIndex: 'addressSender'
           },
           {
-            title:'收件人省份',
+            title:'客户城市',
             align:"center",
-            dataIndex: 'province'
+            dataIndex: 'citySender'
           },
           {
-            title:'收件人邮编',
+            title:'客户省份',
             align:"center",
-            dataIndex: 'postcode'
+            dataIndex: 'provinceSender'
           },
           {
-            title:'收件人国家代码',
+            title:'客户邮编',
             align:"center",
             dataIndex: 'countryCode'
           },
+
           {
             title:'收件人电话',
             align:"center",
-            dataIndex: 'tel'
+            dataIndex: 'countryCodeSender'
           },
           {
-            title:'收件人邮箱',
+            title:'地址库编码',
             align:"center",
-            dataIndex: 'email'
+            dataIndex: 'code'
           },
           {
             title:'总箱数',
@@ -736,49 +737,50 @@
             dataIndex: 'note'
           },
           {
-            title:'发件人公司',
+            title:'收件人姓名',
             align:"center",
-            dataIndex: 'companySender'
+            sorter: true,
+            dataIndex: 'name'
           },
           {
-            title:'发件人姓名',
+            title:'收件人公司',
             align:"center",
-            dataIndex: 'nameSender'
+            dataIndex: 'company'
           },
           {
-            title:'发件人地址',
+            title:'收件人地址',
             align:"center",
-            dataIndex: 'addressSender'
+            dataIndex: 'address'
           },
           {
-            title:'发件人城市',
+            title:'收件人城市',
             align:"center",
-            dataIndex: 'citySender'
+            dataIndex: 'city'
           },
           {
-            title:'发件人省份',
+            title:'收件人省份',
             align:"center",
-            dataIndex: 'provinceSender'
+            dataIndex: 'province'
           },
           {
-            title:'发件人邮编',
+            title:'收件人邮编',
             align:"center",
-            dataIndex: 'postcodeSender'
+            dataIndex: 'postcode'
           },
           {
-            title:'发件人国家代码',
+            title:'收件人国家代码',
             align:"center",
-            dataIndex: 'countryCodeSender'
+            dataIndex: 'countryCode'
           },
           {
-            title:'发件人电话',
+            title:'收件人电话',
             align:"center",
-            dataIndex: 'telSender'
+            dataIndex: 'tel'
           },
           {
-            title:'发件人邮箱',
+            title:'收件人邮箱',
             align:"center",
-            dataIndex: 'emailSender'
+            dataIndex: 'email'
           },
           {
             title: '操作',

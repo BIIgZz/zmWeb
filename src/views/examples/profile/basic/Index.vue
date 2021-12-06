@@ -10,6 +10,18 @@
       </detail-list>
 
       <a-divider style="margin-bottom: 32px"/>
+      <detail-list title="发货客户信息">
+        <detail-list-item term="客户姓名">{{ fbaDtail.nameSender }}</detail-list-item>
+        <detail-list-item term="联系电话">{{ fbaDtail.telSender}}</detail-list-item>
+        <detail-list-item term="联系邮箱">{{ fbaDtail.emailSender}}</detail-list-item>
+        <detail-list-item term="邮编">{{ fbaDtail.postcodeSender}}</detail-list-item>
+        <detail-list-item term="国家代码(二字代码)">{{ fbaDtail.countryCodeSender}}</detail-list-item>
+        <detail-list-item term="省份/州*(二字代码)">{{ fbaDtail.provinceSender}}</detail-list-item>
+        <detail-list-item term="城市">	{{ fbaDtail.citySender}}</detail-list-item>
+        <detail-list-item term="收件地址">	{{ fbaDtail.addressSender}}</detail-list-item>
+        <detail-list-item term="创建人">	{{ dataList[0].createBy}}</detail-list-item>
+      </detail-list>
+      <a-divider style="margin-bottom: 32px"/>
       <detail-list title="收件人信息">
         <detail-list-item term="用户姓名">{{ fbaDtail.name }}</detail-list-item>
         <detail-list-item term="联系电话">{{ fbaDtail.tel}}</detail-list-item>
@@ -23,18 +35,7 @@
         <detail-list-item term="箱数">	12</detail-list-item>
       </detail-list>
       <a-divider style="margin-bottom: 32px"/>
-      <detail-list title="发货人信息">
-        <detail-list-item term="用户姓名">{{ fbaDtail.nameSender }}</detail-list-item>
-        <detail-list-item term="联系电话">{{ fbaDtail.telSender}}</detail-list-item>
-        <detail-list-item term="联系邮箱">{{ fbaDtail.emailSender}}</detail-list-item>
-        <detail-list-item term="邮编">{{ fbaDtail.postcodeSender}}</detail-list-item>
-        <detail-list-item term="国家代码(二字代码)">{{ fbaDtail.countryCodeSender}}</detail-list-item>
-        <detail-list-item term="省份/州*(二字代码)">{{ fbaDtail.provinceSender}}</detail-list-item>
-        <detail-list-item term="城市">	{{ fbaDtail.citySender}}</detail-list-item>
-        <detail-list-item term="收件地址">	{{ fbaDtail.addressSender}}</detail-list-item>
-        <detail-list-item term="创建人">	{{ dataList[0].createBy}}</detail-list-item>
-      </detail-list>
-      <a-divider style="margin-bottom: 32px"/>
+
       <detail-list title="订单特性">
         <detail-list-item term="带电">{{ fbaDtail.electrical_dictText }}</detail-list-item>
         <detail-list-item term="带磁">{{ fbaDtail.magnetic_dictText}}</detail-list-item>

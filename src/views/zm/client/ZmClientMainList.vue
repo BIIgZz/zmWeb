@@ -41,7 +41,7 @@
         :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange, type:'radio'}"
         :customRow="clickThenSelect"
         @change="handleTableChange">
-
+        <a slot="detail" slot-scope="text">{{ text }}</a>
         <template slot="htmlSlot" slot-scope="text">
           <div v-html="text"></div>
         </template>
@@ -80,18 +80,30 @@
 
       </a-table>
     </div>
+    <a-drawer
+      :title="title"
+      placement="right"
+      :closable="false"
+      :width="900"
+      :visible="visible"
+      :after-visible-change="afterVisibleChange"
+      @close="onClose"
+    >
 
-    <a-tabs defaultActiveKey="1"  >
-      <a-tab-pane tab="用户基础信息" key="1" >
-        <ZmClientBasicList :mainId="selectedMainId" />
-      </a-tab-pane>
-      <a-tab-pane tab="用户地址" key="2" forceRender>
-        <ZmClientAddressList :mainId="selectedMainId" />
-      </a-tab-pane>
-      <a-tab-pane tab="财务数据" key="3" forceRender>
-        <ZmClientFinanceList :mainId="selectedMainId" />
-      </a-tab-pane>
-    </a-tabs>
+      <a-tabs defaultActiveKey="1"  >
+        <a-tab-pane tab="用户基础信息" key="1" >
+          <ZmClientBasicList :mainId="selectedMainId" />
+        </a-tab-pane>
+        <a-tab-pane tab="用户地址" key="2" forceRender>
+          <ZmClientAddressList :mainId="selectedMainId" />
+        </a-tab-pane>
+        <a-tab-pane tab="财务数据" key="3" forceRender>
+          <ZmClientFinanceList :mainId="selectedMainId" />
+        </a-tab-pane>
+      </a-tabs>
+
+    </a-drawer>
+
 
     <zmClientMain-modal ref="modalForm" @ok="modalFormOk"></zmClientMain-modal>
   </a-card>
@@ -118,13 +130,16 @@
     },
     data () {
       return {
+        visible: false,
         description: '用户主表管理页面',
         // 表头
         columns: [
           {
             title:'用户编码',
             align:"center",
-            dataIndex: 'code'
+            dataIndex: 'code',
+            scopedSlots: { customRender: 'detail' },
+            customCell:this.cellClick
           },
           {
             title:'用户名',
@@ -164,6 +179,7 @@
         },
         selectedMainId:'',
         superFieldList:[],
+        title:''
       }
     },
     created() {
@@ -182,9 +198,31 @@
           on: {
             click: () => {
               this.onSelectChange(record.id.split(","), [record]);
+              this.title=record.code+"/"+record.username;
             }
           }
         }
+      },
+      cellClick(record) {
+        return {
+          style: {
+            // 'color': 'blue', //这里将名称变了下色
+          },
+          on: {
+            click: () => { //点击事件，也可以加其他事件
+              this.showDrawer();
+            }
+          }
+        }
+      },
+      afterVisibleChange(val) {
+        console.log('visible', val);
+      },
+      showDrawer() {
+        this.visible = true;
+      },
+      onClose() {
+        this.visible = false;
       },
       onClearSelected() {
         this.selectedRowKeys = [];

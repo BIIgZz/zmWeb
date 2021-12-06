@@ -98,8 +98,8 @@
   import '@/assets/less/TableExpand.less'
   import { mixinDevice } from '@/utils/mixin'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-  import ZmHscodeModal from './modules/ZmHscodeModal'
-
+  // import ZmHscodeModal from './modules/ZmHscodeModal'
+  import ZmHscodeModal from './modules/ZmHscodeModal__Style#Drawer'
   export default {
     name: 'ZmHscodeList',
     mixins:[JeecgListMixin, mixinDevice],
@@ -166,7 +166,7 @@
           deleteBatch: "/zmexpress/zmHscode/deleteBatch",
           exportXlsUrl: "/zmexpress/zmHscode/exportXls",
           importExcelUrl: "zmexpress/zmHscode/importExcel",
-          
+
         },
         dictOptions:{},
         superFieldList:[],

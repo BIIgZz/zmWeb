@@ -4,18 +4,130 @@
     <div class="table-page-search-wrapper">
       <a-form layout="inline" @keyup.enter.native="searchQuery">
         <a-row :gutter="24">
+          <a-col :xl="6" :lg="7" :md="8" :sm="24">
+            <a-form-item label="运单号">
+              <a-input placeholder="请输入运单号" v-model="queryParam.waybillId"></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :xl="6" :lg="7" :md="8" :sm="24">
+            <a-form-item label="客户订单号">
+              <a-input placeholder="请输入客户订单号" v-model="queryParam.orderId"></a-input>
+            </a-form-item>
+          </a-col>
+          <template v-if="toggleSearchStatus">
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="客户名称">
+                <j-dict-select-tag placeholder="请选择客户名称" v-model="queryParam.name" dictCode="zm_client_main,username,username"/>
+              </a-form-item>
+            </a-col>
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="公司名">
+                <a-input placeholder="请输入公司名" v-model="queryParam.company"></a-input>
+              </a-form-item>
+            </a-col>
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="柜号">
+                <a-input placeholder="请输入柜号" v-model="queryParam.caseId"></a-input>
+              </a-form-item>
+            </a-col>
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="FBA号">
+                <a-input placeholder="请输入FBA号" v-model="queryParam.fbaId"></a-input>
+              </a-form-item>
+            </a-col>
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="工作号">
+                <a-input placeholder="请输入工作号" v-model="queryParam.jobId"></a-input>
+              </a-form-item>
+            </a-col>
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="服务">
+                <j-search-select-tag placeholder="请选择服务" v-model="queryParam.service" dict="zm_service,name,name"/>
+              </a-form-item>
+            </a-col>
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="目的港">
+                <a-input placeholder="请输入目的港" v-model="queryParam.destination"></a-input>
+              </a-form-item>
+            </a-col>
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="仓库代码">
+                <j-search-select-tag placeholder="请选择仓库代码" v-model="queryParam.warehouseId" dict="zm_fba_warehouse_detail,code,code"/>
+              </a-form-item>
+            </a-col>
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="收件人">
+                <a-input placeholder="请输入收件人" v-model="queryParam.recipient"></a-input>
+              </a-form-item>
+            </a-col>
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="承运商">
+                <j-search-select-tag placeholder="请选择承运商" v-model="queryParam.carrier" dict="zm_partner,company,company"/>
+              </a-form-item>
+            </a-col>
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="跟踪号">
+                <a-input placeholder="请输入跟踪号" v-model="queryParam.trackingNumber"></a-input>
+              </a-form-item>
+            </a-col>
+            <a-col :xl="10" :lg="11" :md="12" :sm="24">
+              <a-form-item label="计费时间">
+                <j-date :show-time="true" date-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择开始时间" class="query-group-cust" v-model="queryParam.billableTime_begin"></j-date>
+                <span class="query-group-split-cust"></span>
+                <j-date :show-time="true" date-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择结束时间" class="query-group-cust" v-model="queryParam.billableTime_end"></j-date>
+              </a-form-item>
+            </a-col>
+            <a-col :xl="10" :lg="11" :md="12" :sm="24">
+              <a-form-item label="出货时间">
+                <j-date :show-time="true" date-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择开始时间" class="query-group-cust" v-model="queryParam.deliveryTime_begin"></j-date>
+                <span class="query-group-split-cust"></span>
+                <j-date :show-time="true" date-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择结束时间" class="query-group-cust" v-model="queryParam.deliveryTime_end"></j-date>
+              </a-form-item>
+            </a-col>
+            <a-col :xl="10" :lg="11" :md="12" :sm="24">
+              <a-form-item label="签收时间">
+                <j-date :show-time="true" date-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择开始时间" class="query-group-cust" v-model="queryParam.submissionTime_begin"></j-date>
+                <span class="query-group-split-cust"></span>
+                <j-date :show-time="true" date-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择结束时间" class="query-group-cust" v-model="queryParam.submissionTime_end"></j-date>
+              </a-form-item>
+            </a-col>
+          </template>
+          <a-col :xl="6" :lg="7" :md="8" :sm="24">
+            <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
+              <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
+              <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
+              <a @click="handleToggleSearch" style="margin-left: 8px">
+                {{ toggleSearchStatus ? '收起' : '展开' }}
+                <a-icon :type="toggleSearchStatus ? 'up' : 'down'"/>
+              </a>
+            </span>
+          </a-col>
         </a-row>
       </a-form>
     </div>
     <!-- 查询区域-END -->
-    
+
     <!-- 操作按钮区域 -->
     <div class="table-operator">
       <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>
       <a-button type="primary" icon="download" @click="handleExportXls('运单表')">导出</a-button>
-      <a-upload name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl" @change="handleImportExcel">
+      <a-upload name="file" :showUploadList="true" :openFileDialogOnClick="true" :multiple="false" :headers="tokenHeader" :action="importExcelUrl" @change="handleImportExcel">
         <a-button type="primary" icon="import">导入</a-button>
       </a-upload>
+
+      <a-button type="primary" @click="showModal">
+        Open Modal
+      </a-button>
+      <a-modal v-model="visible_import" title="Excel导入" @ok="handleOk">
+        <a-form-model-item label="客户名称"  :labelCol="labelCol" :wrapperCol="wrapperCol"  prop="name">
+          <j-dict-select-tag type="list"  style="width:280px;"  v-model="model.name" dictCode="zm_client_main,username,username" placeholder="请选择客户名称" />
+        </a-form-model-item>
+        <a-upload name="file" :showUploadList="true" :multiple="false" :headers="tokenHeader" :action="importExcelUrl" >
+          <a-button type="primary" icon="import">导入</a-button>
+        </a-upload>
+      </a-modal>
+
+
       <!-- 高级查询区域 -->
       <j-super-query :fieldList="superFieldList" ref="superQueryModal" @handleSuperQuery="handleSuperQuery"></j-super-query>
       <a-dropdown v-if="selectedRowKeys.length > 0">
@@ -97,6 +209,7 @@
 
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import ZmWaybillModal from './modules/ZmWaybillModal'
+  // import ZmWaybillModal from './modules/ZmWaybillModal__Style#Drawer'
   import {filterMultiDictText} from '@/components/dict/JDictSelectUtil'
   import '@/assets/less/TableExpand.less'
 
@@ -108,6 +221,7 @@
     },
     data () {
       return {
+        visible_import: false,
         description: '运单表管理页面',
         // 表头
         columns: [
@@ -169,7 +283,7 @@
           {
             title:'目的港',
             align:"center",
-            dataIndex: 'destination_dictText'
+            dataIndex: 'destination'
           },
           {
             title:'仓库代码',
@@ -289,8 +403,7 @@
           {
             title:'未付',
             align:"center",
-            dataIndex: 'unpaid',
-
+            dataIndex: 'unpaid'
           },
           {
             title:'计费方式',
@@ -331,8 +444,8 @@
           delete: "/zmexpress/zmWaybill/delete",
           deleteBatch: "/zmexpress/zmWaybill/deleteBatch",
           exportXlsUrl: "/zmexpress/zmWaybill/exportXls",
-          importExcelUrl: "zmexpress/zmWaybill/importExcel",
-          
+          importExcelUrl: "zmexpress/zmWaybill/importExcelSingle",
+
         },
         dictOptions:{},
         superFieldList:[],
@@ -343,16 +456,26 @@
     },
     computed: {
       importExcelUrl: function(){
-        return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`;
+        let  url = `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`;
+        console.log(url);
+        return url;
       }
     },
     methods: {
+      showModal() {
+        this.visible_import = true;
+      },
+      handleOk(e) {
+        console.log(e);
+        this.visible = false;
+        this.handleImportExcel();
+      },
       initDictConfig(){
       },
       getSuperFieldList(){
         let fieldList=[];
          fieldList.push({type:'string',value:'waybillId',text:'运单号',dictCode:''})
-         fieldList.push({type:'popup',value:'orderId',text:'客户订单号', popup:{code:'way_bill',field:'*',orgFields:'*',destFields:'*'}})
+         fieldList.push({type:'string',value:'orderId',text:'客户订单号',dictCode:''})
          fieldList.push({type:'string',value:'name',text:'客户名称',dictCode:'zm_client_main,username,username'})
          fieldList.push({type:'string',value:'company',text:'公司名',dictCode:''})
          fieldList.push({type:'string',value:'caseId',text:'柜号',dictCode:''})
@@ -360,7 +483,7 @@
          fieldList.push({type:'string',value:'jobId',text:'工作号',dictCode:''})
          fieldList.push({type:'sel_search',value:'service',text:'服务',dictTable:'zm_service', dictText:'name', dictCode:'name'})
          fieldList.push({type:'string',value:'deliveryMethod',text:'派送方式',dictCode:''})
-         fieldList.push({type:'sel_search',value:'destination',text:'目的港',dictTable:'zm_airport', dictText:'name', dictCode:'name'})
+         fieldList.push({type:'string',value:'destination',text:'目的港',dictCode:'zm_airport,name,name'})
          fieldList.push({type:'sel_search',value:'warehouseId',text:'仓库代码',dictTable:'zm_fba_warehouse_detail', dictText:'code', dictCode:'code'})
          fieldList.push({type:'string',value:'recipient',text:'收件人',dictCode:''})
          fieldList.push({type:'string',value:'address',text:'收件人地址',dictCode:''})

@@ -1,32 +1,32 @@
 <template>
   <a-spin :spinning="confirmLoading">
-    <j-form-container :disabled="formDisabled">
+
+    <div >
+      <a-row >
+        <a-col  :span="8">
+          <a-form-model-item label="客户名称"  :labelCol="labelCol" :wrapperCol="wrapperCol"  prop="name">
+            <j-dict-select-tag type="list"  style="width:280px;"  v-model="model.name" dictCode="zm_client_main,username,username" placeholder="请选择客户名称" />
+          </a-form-model-item>
+        </a-col>
+        <a-button type="primary" @click="showDrawer" :labelCol="labelCol" :wrapperCol="wrapperCol" icon="search" v-show="true">下一步</a-button>
+      </a-row>
+
+    </div>
+    <j-form-container :disabled="formDisabled" v-show="visible_form">
       <!-- 主表单区域 -->
-      <a-form-model ref="form" :model="model" :rules="validatorRules" slot="detail">
+      <a-form-model ref="form" :model="model" :rules="validatorRules" slot="detail" >
         <a-row>
           <a-col :span="8" >
-            <a-form-model-item label="运单号" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="waybillId">
+            <a-form-model-item label="运单号" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="waybillId" >
               <a-input v-model="model.waybillId" placeholder="请输入运单号" ></a-input>
             </a-form-model-item>
           </a-col>
           <a-col :span="8" >
             <a-form-model-item label="客户订单号" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="orderId">
-              <j-popup
-                v-model="model.orderId"
-                 field="orderId"
-                org-fields="*"
-                dest-fields="*"
-                code="way_bill"
-                :multi="true"
-                @input="popupCallback"
-                />
+              <a-input v-model="model.orderId" placeholder="请输入客户订单号" ></a-input>
             </a-form-model-item>
           </a-col>
-          <a-col :span="8" >
-            <a-form-model-item label="客户名称" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="name">
-              <j-dict-select-tag type="list" v-model="model.name" dictCode="zm_client_main,username,username" placeholder="请选择客户名称" />
-            </a-form-model-item>
-          </a-col>
+
           <a-col :span="8" >
             <a-form-model-item label="公司名" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="company">
               <a-input v-model="model.company" placeholder="请输入公司名" ></a-input>
@@ -59,7 +59,7 @@
           </a-col>
           <a-col :span="8" >
             <a-form-model-item label="目的港" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="destination">
-              <j-search-select-tag v-model="model.destination" dict="zm_airport,name,name"  />
+              <a-input v-model="model.destination" placeholder="请输入目的港" ></a-input>
             </a-form-model-item>
           </a-col>
           <a-col :span="8" >
@@ -187,9 +187,9 @@
               <a-input v-model="model.billingMethod" placeholder="请输入计费方式" ></a-input>
             </a-form-model-item>
           </a-col>
-          <a-col :span="8" >
+          <a-col :span="12" >
             <a-form-model-item label="物品属性" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="itemProperties">
-              <j-multi-select-tag type="checkbox" v-model="model.itemProperties" dictCode="item_properties" placeholder="请选择物品属性" />
+              <j-multi-select-tag type="checkbox" v-model="model.itemProperties" dictCode="item_properties" style="width:400px;"  placeholder="请选择物品属性" />
             </a-form-model-item>
           </a-col>
           <a-col :span="8" >
@@ -211,7 +211,7 @@
       </a-form-model>
     </j-form-container>
       <!-- 子表单区域 -->
-    <a-tabs v-model="activeKey" @change="handleChangeTabs">
+    <a-tabs v-model="activeKey" @change="handleChangeTabs" v-show="visible_form">
       <a-tab-pane tab="货柜详情" :key="refKeys[0]" :forceRender="true">
         <j-editable-table
           :ref="refKeys[0]"
@@ -242,6 +242,7 @@
     },
     data() {
       return {
+        visible_form: false,
         labelCol: {
           xs: { span: 24 },
           sm: { span: 6 },
@@ -445,6 +446,7 @@
       },
     },
     created () {
+
     },
     methods: {
       addBefore(){
@@ -480,6 +482,15 @@
             })
           })
       },
+      showDrawer() {
+        console.log(this.model.name);
+        if (this.model.name!=null){
+          this.visible_form = true;
+        }else if(this.model.name==' '){
+          this.visible_form = false;
+        }
+
+      },
       /** 整理成formData */
       classifyIntoFormData(allValues) {
         let main = Object.assign(this.model, allValues.formValue)
@@ -491,9 +502,6 @@
       validateError(msg){
         this.$message.error(msg)
       },
-     popupCallback(value,row){
-       this.model = Object.assign(this.model, row);
-     },
 
     }
   }

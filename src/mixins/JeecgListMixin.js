@@ -389,6 +389,7 @@ export const JeecgListMixin = {
     },
     /* 导入 */
     handleImportExcel(info){
+
       if (info.file.status !== 'uploading') {
         console.log(info.file, info.fileList);
       }
