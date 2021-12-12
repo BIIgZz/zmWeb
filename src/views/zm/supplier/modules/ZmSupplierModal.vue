@@ -3,123 +3,58 @@
     :title="title"
     :width="width"
     :visible="visible"
-    :confirmLoading="confirmLoading"
     switchFullscreen
     @ok="handleOk"
+    :okButtonProps="{ class:{'jee-hidden': disableSubmit} }"
     @cancel="handleCancel"
     cancelText="关闭">
-    <a-spin :spinning="confirmLoading">
-      <a-form-model ref="form" :model="model" :rules="validatorRules">
-        <a-row>
-          <a-col :span="24">
-            <a-form-model-item label="供应商类型" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="type">
-              <a-input v-model="model.type" placeholder="请输入供应商类型" ></a-input>
-            </a-form-model-item>
-          </a-col>
-          <a-col :span="24">
-            <a-form-model-item label="状态" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="status">
-              <j-dict-select-tag type="list" v-model="model.status" dictCode="service_status" placeholder="请选择状态" />
-            </a-form-model-item>
-          </a-col>
-          <a-col :span="24">
-            <a-form-model-item label="备注" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="note">
-              <a-textarea v-model="model.note" rows="4" placeholder="请输入备注" />
-            </a-form-model-item>
-          </a-col>
-        </a-row>
-      </a-form-model>
-    </a-spin>
+    <zm-supplier-form ref="realForm" @ok="submitCallback" :disabled="disableSubmit"></zm-supplier-form>
   </j-modal>
 </template>
 
 <script>
 
-  import { httpAction } from '@/api/manage'
-  import { validateDuplicateValue } from '@/utils/util'
-
+  import ZmSupplierForm from './ZmSupplierForm'
   export default {
-    name: "ZmSupplierModal",
-    components: { 
+    name: 'ZmSupplierModal',
+    components: {
+      ZmSupplierForm
     },
     data () {
       return {
-        title:"操作",
-        width:800,
+        title:'',
+        width:896,
         visible: false,
-        model:{
-        },
-        labelCol: {
-          xs: { span: 24 },
-          sm: { span: 5 },
-        },
-        wrapperCol: {
-          xs: { span: 24 },
-          sm: { span: 16 },
-        },
-
-        confirmLoading: false,
-        validatorRules: {
-        },
-        url: {
-          add: "/zmexpress/zmSupplier/add",
-          edit: "/zmexpress/zmSupplier/edit",
-        }
-     
+        disableSubmit: false
       }
-    },
-    created () {
-    //备份model原始值
-      this.modelDefault = JSON.parse(JSON.stringify(this.model));
     },
     methods: {
       add () {
-        this.edit(this.modelDefault);
+        this.visible=true
+        this.$nextTick(()=>{
+          this.$refs.realForm.add();
+        })
       },
       edit (record) {
-        this.model = Object.assign({}, record);
-        this.visible = true;
+        this.visible=true
+        this.$nextTick(()=>{
+          this.$refs.realForm.edit(record);
+        })
       },
       close () {
         this.$emit('close');
         this.visible = false;
-        this.$refs.form.clearValidate();
       },
       handleOk () {
-        const that = this;
-        // 触发表单验证
-        this.$refs.form.validate(valid => {
-          if (valid) {
-            that.confirmLoading = true;
-            let httpurl = '';
-            let method = '';
-            if(!this.model.id){
-              httpurl+=this.url.add;
-              method = 'post';
-            }else{
-              httpurl+=this.url.edit;
-               method = 'put';
-            }
-            httpAction(httpurl,this.model,method).then((res)=>{
-              if(res.success){
-                that.$message.success(res.message);
-                that.$emit('ok');
-              }else{
-                that.$message.warning(res.message);
-              }
-            }).finally(() => {
-              that.confirmLoading = false;
-              that.close();
-            })
-          }else{
-             return false
-          }
-        })
+        this.$refs.realForm.submitForm();
+      },
+      submitCallback(){
+        this.$emit('ok');
+        this.visible = false;
       },
       handleCancel () {
         this.close()
-      },
-
-      
+      }
     }
   }
 </script>

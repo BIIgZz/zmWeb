@@ -70,21 +70,21 @@
                 <a-input placeholder="请输入跟踪号" v-model="queryParam.trackingNumber"></a-input>
               </a-form-item>
             </a-col>
-            <a-col :xl="10" :lg="11" :md="12" :sm="24">
+            <a-col :xl="20" :lg="11" :md="12" :sm="24">
               <a-form-item label="计费时间">
                 <j-date :show-time="true" date-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择开始时间" class="query-group-cust" v-model="queryParam.billableTime_begin"></j-date>
                 <span class="query-group-split-cust"></span>
                 <j-date :show-time="true" date-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择结束时间" class="query-group-cust" v-model="queryParam.billableTime_end"></j-date>
               </a-form-item>
             </a-col>
-            <a-col :xl="10" :lg="11" :md="12" :sm="24">
+            <a-col :xl="20" :lg="11" :md="12" :sm="24" >
               <a-form-item label="出货时间">
                 <j-date :show-time="true" date-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择开始时间" class="query-group-cust" v-model="queryParam.deliveryTime_begin"></j-date>
                 <span class="query-group-split-cust"></span>
                 <j-date :show-time="true" date-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择结束时间" class="query-group-cust" v-model="queryParam.deliveryTime_end"></j-date>
               </a-form-item>
             </a-col>
-            <a-col :xl="10" :lg="11" :md="12" :sm="24">
+            <a-col :xl="20" :lg="11" :md="12" :sm="24">
               <a-form-item label="签收时间">
                 <j-date :show-time="true" date-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择开始时间" class="query-group-cust" v-model="queryParam.submissionTime_begin"></j-date>
                 <span class="query-group-split-cust"></span>
@@ -119,9 +119,6 @@
         Open Modal
       </a-button>
       <a-modal v-model="visible_import" title="Excel导入" @ok="handleOk">
-        <a-form-model-item label="客户名称"  :labelCol="labelCol" :wrapperCol="wrapperCol"  prop="name">
-          <j-dict-select-tag type="list"  style="width:280px;"  v-model="model.name" dictCode="zm_client_main,username,username" placeholder="请选择客户名称" />
-        </a-form-model-item>
         <a-upload name="file" :showUploadList="true" :multiple="false" :headers="tokenHeader" :action="importExcelUrl" >
           <a-button type="primary" icon="import">导入</a-button>
         </a-upload>
@@ -143,8 +140,403 @@
       <div class="ant-alert ant-alert-info" style="margin-bottom: 16px;">
         <i class="anticon anticon-info-circle ant-alert-icon"></i> 已选择 <a style="font-weight: 600">{{ selectedRowKeys.length }}</a>项
         <a style="margin-left: 24px" @click="onClearSelected">清空</a>
+        <!--        自定义列-->
+        <span style="float:right;">
+          <a @click="loadData()"><a-icon type="sync" />刷新</a>
+          <a-divider type="vertical" />
+          <a-popover title="自定义列" trigger="click" placement="leftBottom">
+            <template slot="content">
+              <a-checkbox-group @change="onColSettingsChange" v-model="settingColumns" :defaultValue="settingColumns">
+                <a-row style="width: 400px">
+                  <template v-for="(item,index) in columns">
+                    <template v-if="item.key!='rowIndex'&& item.dataIndex!='action'">
+                        <a-col :span="12"><a-checkbox :value="item.dataIndex"><j-ellipsis :value="item.title" :length="10"></j-ellipsis></a-checkbox></a-col>
+                    </template>
+                  </template>
+                </a-row>
+              </a-checkbox-group>
+            </template>
+            <a><a-icon type="setting" />设置</a>
+          </a-popover>
+        </span>
+        <!--        自定义列 -->
       </div>
+      <!-- 查询区域 -->
+      <div class="table-page-search-wrapper">
+        <template>
+          <div>
+            <a-tabs default-active-key="0"  type="card" @change="searchQuery"     v-model="queryParam.status">
+              <a-tab-pane key="0" tab="已下单"    >
+                <template>
+                  <div>
+                    <a-button-group >
+                      <a-button icon="login" @click="">按客户数据拣货</a-button>
+                      <a-button icon="printer">打印标签</a-button>
+                      <a-button icon="close-circle">拦截/问题件</a-button>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="" icon="edit">
+                          <a-menu-item key="1">
+                            <a-icon type="edit"/>服务
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="edit"/>供应商服务
+                          </a-menu-item>
+                          <a-menu-item key="3" >
+                            <a-icon type="edit"/>备注
+                          </a-menu-item>
+                          <a-menu-item key="4" >
+                            <a-icon type="edit"/>内部备注
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="edit"/> 批量修改  </a-button>
+                      </a-dropdown>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="" icon="cloud-download">
+                          <a-menu-item key="1">
+                            <a-icon type="cloud-download"  @click="handleExportXls('导入fba表')"/>运单
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="cloud-download"/>货箱
+                          </a-menu-item>
+                          <a-menu-item key="3" >
+                            <a-icon type="cloud-download"/>申报信息
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="cloud-download"/> 导出  </a-button>
+                      </a-dropdown>
+                      <a-button type="danger" @click="change" key='0' > <a-icon type="close" />取消</a-button>
+                    </a-button-group>
+                  </div>
+                </template>
+              </a-tab-pane>
+              <a-tab-pane key="1" tab="已收货" force-render>
+                <template>
+                  <div>
+                    <a-button-group >
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="" icon="cloud-download">
+                          <a-menu-item key="1">
+                            <a-icon type="cloud-download"/>放入出货单
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="cloud-download"/>放入提单
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="cloud-download"/> 配货  </a-button>
+                      </a-dropdown>
+                      <a-button icon="printer">打印标签</a-button>
+                      <a-button icon="close-circle">拦截/问题件</a-button>
+                      <a-button icon="stop">退件</a-button>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="" icon="cloud-download">
+                          <a-menu-item key="1">
+                            <a-icon type="vertical-align-top" />转运中
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="issues-close"/> 状态调整  </a-button>
+                      </a-dropdown>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="" icon="edit">
+                          <a-menu-item key="1">
+                            <a-icon type="edit"/>服务
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="edit"/>供应商服务
+                          </a-menu-item>
+                          <a-menu-item key="3" >
+                            <a-icon type="edit"/>备注
+                          </a-menu-item>
+                          <a-menu-item key="4" >
+                            <a-icon type="edit"/>内部备注
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="edit"/> 批量修改  </a-button>
+                      </a-dropdown>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="" icon="cloud-download">
+                          <a-menu-item key="1">
+                            <a-icon type="cloud-download"  @click="handleExportXls('导入fba表')"/>运单
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="cloud-download"/>货箱
+                          </a-menu-item>
+                          <a-menu-item key="3" >
+                            <a-icon type="cloud-download"/>申报信息
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="cloud-download"/> 导出  </a-button>
+                      </a-dropdown>
+                      <a-button icon="plus-circle">入仓</a-button>
 
+                    </a-button-group>
+                  </div>
+                </template>
+              </a-tab-pane>
+              <a-tab-pane key="2" tab="转运中">
+                <template>
+                  <div>
+                    <a-button-group >
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="" icon="cloud-download">
+                          <a-menu-item key="1">
+                            <a-icon type="cloud-download"/>放入出货单
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="cloud-download"/>放入提单
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="cloud-download"/> 配货  </a-button>
+                      </a-dropdown>
+                      <a-button icon="printer">打印标签</a-button>
+                      <a-button icon="close-circle">拦截/问题件</a-button>
+                      <a-button icon="stop">退件</a-button>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="" icon="cloud-download">
+                          <a-menu-item key="1">
+                            <a-icon type="vertical-align-top" />已签收
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="issues-close"/> 状态调整  </a-button>
+                      </a-dropdown>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="" icon="edit">
+                          <a-menu-item key="1">
+                            <a-icon type="edit"/>服务
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="edit"/>供应商服务
+                          </a-menu-item>
+                          <a-menu-item key="3" >
+                            <a-icon type="edit"/>备注
+                          </a-menu-item>
+                          <a-menu-item key="4" >
+                            <a-icon type="edit"/>内部备注
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="edit"/> 批量修改  </a-button>
+                      </a-dropdown>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="" icon="cloud-download">
+                          <a-menu-item key="1">
+                            <a-icon type="cloud-download"  @click="handleExportXls('导入fba表')"/>运单
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="cloud-download"/>货箱
+                          </a-menu-item>
+                          <a-menu-item key="3" >
+                            <a-icon type="cloud-download"/>申报信息
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="cloud-download"/> 导出  </a-button>
+                      </a-dropdown>
+                      <a-button icon="plus-circle">入仓</a-button>
+
+                    </a-button-group>
+                  </div>
+                </template>
+              </a-tab-pane>
+              <a-tab-pane key="3" tab="已签收">
+                <template>
+                  <div>
+                    <a-button-group >
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="" icon="cloud-download">
+                          <a-menu-item key="1">
+                            <a-icon type="cloud-download"/>放入出货单
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="cloud-download"/>放入提单
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="cloud-download"/> 配货  </a-button>
+                      </a-dropdown>
+                      <a-button icon="printer">打印标签</a-button>
+                      <a-button icon="close-circle">拦截/问题件</a-button>
+                      <a-button icon="stop">退件</a-button>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="" icon="cloud-download">
+                          <a-menu-item key="1">
+                            <a-icon type="vertical-align-top" />已签收
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="issues-close"/> 状态调整  </a-button>
+                      </a-dropdown>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="" icon="edit">
+                          <a-menu-item key="1">
+                            <a-icon type="edit"/>服务
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="edit"/>供应商服务
+                          </a-menu-item>
+                          <a-menu-item key="3" >
+                            <a-icon type="edit"/>备注
+                          </a-menu-item>
+                          <a-menu-item key="4" >
+                            <a-icon type="edit"/>内部备注
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="edit"/> 批量修改  </a-button>
+                      </a-dropdown>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="" icon="cloud-download">
+                          <a-menu-item key="1">
+                            <a-icon type="cloud-download"  @click="handleExportXls('导入fba表')"/>运单
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="cloud-download"/>货箱
+                          </a-menu-item>
+                          <a-menu-item key="3" >
+                            <a-icon type="cloud-download"/>申报信息
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="cloud-download"/> 导出  </a-button>
+                      </a-dropdown>
+                      <a-button icon="plus-circle">入仓</a-button>
+
+                    </a-button-group>
+                  </div>
+                </template>
+              </a-tab-pane>
+              <a-tab-pane key="4" tab="退件">
+                <template>
+                  <div>
+                    <a-button-group >
+                      <a-button icon="printer">打印标签</a-button>
+                      <a-button icon="close-circle">拦截/问题件</a-button>
+                      <a-button icon="redo">重新发货</a-button>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="" icon="edit">
+                          <a-menu-item key="1">
+                            <a-icon type="edit"/>服务
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="edit"/>供应商服务
+                          </a-menu-item>
+                          <a-menu-item key="3" >
+                            <a-icon type="edit"/>备注
+                          </a-menu-item>
+                          <a-menu-item key="4" >
+                            <a-icon type="edit"/>内部备注
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="edit"/> 批量修改  </a-button>
+                      </a-dropdown>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="" icon="cloud-download">
+                          <a-menu-item key="1">
+                            <a-icon type="cloud-download"  @click="handleExportXls('导入fba表')"/>运单
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="cloud-download"/>货箱
+                          </a-menu-item>
+                          <a-menu-item key="3" >
+                            <a-icon type="cloud-download"/>申报信息
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="cloud-download"/> 导出  </a-button>
+                      </a-dropdown>
+                      <a-button icon="plus-circle">入仓</a-button>
+
+                    </a-button-group>
+                  </div>
+                </template>
+              </a-tab-pane>
+              <a-tab-pane key="5" tab="已取消">
+                <template>
+                  <div>
+                    <a-button-group >
+                      <a-button icon="printer">打印标签</a-button>
+                      <a-button icon="close-circle">拦截/问题件</a-button>
+                      <a-button icon="redo">重新发货</a-button>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="" icon="edit">
+                          <a-menu-item key="1">
+                            <a-icon type="edit"/>服务
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="edit"/>供应商服务
+                          </a-menu-item>
+                          <a-menu-item key="3" >
+                            <a-icon type="edit"/>备注
+                          </a-menu-item>
+                          <a-menu-item key="4" >
+                            <a-icon type="edit"/>内部备注
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="edit"/> 批量修改  </a-button>
+                      </a-dropdown>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="" icon="cloud-download">
+                          <a-menu-item key="1">
+                            <a-icon type="cloud-download"  @click="handleExportXls('导入fba表')"/>运单
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="cloud-download"/>货箱
+                          </a-menu-item>
+                          <a-menu-item key="3" >
+                            <a-icon type="cloud-download"/>申报信息
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="cloud-download"/> 导出  </a-button>
+                      </a-dropdown>
+                      <a-button icon="plus-circle">入仓</a-button>
+
+                    </a-button-group>
+                  </div>
+                </template>
+              </a-tab-pane>
+              <a-tab-pane key="" tab="全部" >
+                <template>
+                  <div>
+                    <a-button-group >
+                      <a-button icon="printer">打印标签</a-button>
+                      <a-button icon="close-circle">拦截/问题件</a-button>
+                      <a-button icon="redo">重新发货</a-button>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="" icon="edit">
+                          <a-menu-item key="1">
+                            <a-icon type="edit"/>服务
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="edit"/>供应商服务
+                          </a-menu-item>
+                          <a-menu-item key="3" >
+                            <a-icon type="edit"/>备注
+                          </a-menu-item>
+                          <a-menu-item key="4" >
+                            <a-icon type="edit"/>内部备注
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="edit"/> 批量修改  </a-button>
+                      </a-dropdown>
+                      <a-dropdown >
+                        <a-menu slot="overlay" @click="" icon="cloud-download">
+                          <a-menu-item key="1">
+                            <a-icon type="cloud-download"  @click="handleExportXls('导入fba表')"/>运单
+                          </a-menu-item>
+                          <a-menu-item key="2">
+                            <a-icon type="cloud-download"/>货箱
+                          </a-menu-item>
+                          <a-menu-item key="3" >
+                            <a-icon type="cloud-download"/>申报信息
+                          </a-menu-item>
+                        </a-menu>
+                        <a-button><a-icon type="cloud-download"/> 导出  </a-button>
+                      </a-dropdown>
+                      <a-button icon="plus-circle">入仓</a-button>
+
+                    </a-button-group>
+                  </div>
+                </template>
+              </a-tab-pane>
+            </a-tabs>
+          </div>
+        </template>
+
+      </div>
+      <!-- 查询区域-END -->
+      <!-- 列更改注意修改columns     -->
       <a-table
         ref="table"
         size="middle"
@@ -152,12 +544,32 @@
         rowKey="id"
         class="j-table-force-nowrap"
         :scroll="{x:true}"
-        :columns="columns"
+
+        :columns="defColumns"
+
         :dataSource="dataSource"
         :pagination="ipagination"
         :loading="loading"
         :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
         @change="handleTableChange">
+        <!--        自定义列-->
+        <div slot="filterDropdown">
+          <a-card>
+            <a-checkbox-group @change="onColSettingsChange" v-model="settingColumns" :defaultValue="settingColumns">
+              <a-row style="width: 400px">
+                <template v-for="(item,index) in columns">
+                  <template v-if="item.key!='rowIndex'&& item.dataIndex!='action'">
+                    <a-col :span="12"><a-checkbox :value="item.dataIndex"><j-ellipsis :value="item.title" :length="10"></j-ellipsis></a-checkbox></a-col>
+                  </template>
+                </template>
+              </a-row>
+            </a-checkbox-group>
+          </a-card>
+        </div>
+        <a-icon slot="filterIcon" type='setting' :style="{ fontSize:'16px',color:  '#108ee9' }" />
+        <!--        自定义列-->
+        /** 超链接 */
+        <a slot="httpurl" slot-scope="text">{{ text }}</a>
 
         <template slot="htmlSlot" slot-scope="text">
           <div v-html="text"></div>
@@ -197,30 +609,59 @@
             </a-menu>
           </a-dropdown>
         </span>
-
       </a-table>
+      <a-drawer
+        title="详细信息"
+        placement="right"
+        width = "1200"
+        :closable="false"
+        :visible="visible"
+        :after-visible-change="afterVisibleChange"
+        @close="onClose"
+      >
+       <Advanced :myProp="testData"></Advanced>
+      </a-drawer>
     </div>
 
     <zm-waybill-modal ref="modalForm" @ok="modalFormOk"/>
   </a-card>
+
+
 </template>
 
 <script>
-
+  import Advanced from '@/views/examples/profile/advanced/Advanced'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import ZmWaybillModal from './modules/ZmWaybillModal'
   // import ZmWaybillModal from './modules/ZmWaybillModal__Style#Drawer'
   import {filterMultiDictText} from '@/components/dict/JDictSelectUtil'
   import '@/assets/less/TableExpand.less'
+  import Vue from 'vue'
 
   export default {
     name: "ZmWaybillList",
     mixins:[JeecgListMixin],
     components: {
-      ZmWaybillModal
+      ZmWaybillModal,
+      Advanced
     },
     data () {
       return {
+
+        //列设置
+        settingColumns:[],
+        testData:"",
+        visible: false,
+        pStyle: {
+          fontSize: '16px',
+          color: 'rgba(0,0,0,0.85)',
+          lineHeight: '24px',
+          display: 'block',
+          marginBottom: '16px',
+        },
+        pStyle2: {
+          marginBottom: '24px',
+        },
         visible_import: false,
         description: '运单表管理页面',
         // 表头
@@ -238,12 +679,14 @@
           {
             title:'运单号',
             align:"center",
-            dataIndex: 'waybillId'
+            dataIndex: 'waybillId',
+            scopedSlots: { customRender: 'httpurl' },
+            customCell:this.cellClick2
           },
           {
             title:'客户订单号',
             align:"center",
-            dataIndex: 'orderId'
+            dataIndex: 'orderId',
           },
           {
             title:'客户名称',
@@ -436,7 +879,10 @@
             align:"center",
             fixed:"right",
             width:147,
-            scopedSlots: { customRender: 'action' },
+            scopedSlots: {
+              filterDropdown: 'filterDropdown',
+              filterIcon: 'filterIcon',
+              customRender: 'action'},
           }
         ],
         url: {
@@ -444,24 +890,36 @@
           delete: "/zmexpress/zmWaybill/delete",
           deleteBatch: "/zmexpress/zmWaybill/deleteBatch",
           exportXlsUrl: "/zmexpress/zmWaybill/exportXls",
-          importExcelUrl: "zmexpress/zmWaybill/importExcelSingle",
+          importExcelUrl: "/zmexpress/zmWaybill/importExcelSingle",
 
         },
         dictOptions:{},
         superFieldList:[],
+        defColumns:[],
       }
     },
+
     created() {
-      this.getSuperFieldList();
+      this.initColumns();
+      // this.getSuperFieldList();
     },
+
     computed: {
       importExcelUrl: function(){
         let  url = `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`;
-        console.log(url);
         return url;
       }
     },
     methods: {
+      afterVisibleChange(val) {
+        console.log('visible', val);
+      },
+      showDrawer() {
+        this.visible = true;
+      },
+      onClose() {
+        this.visible = false;
+      },
       showModal() {
         this.visible_import = true;
       },
@@ -469,6 +927,65 @@
         console.log(e);
         this.visible = false;
         this.handleImportExcel();
+      },
+
+      /** 单元格点击事件*/
+      cellClick2(record) {
+        return {
+          style: {
+            // 'color': 'blue', //这里将名称变了下色
+          },
+          on: {
+            click: () => { //点击事件，也可以加其他事件
+              // this.$router.push({path: '/profile/advanced',query:{record: record}})
+              this.testData=record;
+              this.showDrawer();
+            }
+          }
+        }
+      },
+      //列设置更改事件
+      onColSettingsChange (checkedValues) {
+        var key = this.$route.name+":colsettings";
+        Vue.ls.set(key, checkedValues, 7 * 24 * 60 * 60 * 1000)
+        this.settingColumns = checkedValues;
+        const cols = this.columns.filter(item => {
+          if(item.key =='rowIndex'|| item.dataIndex=='action'){
+            return true
+          }
+          if (this.settingColumns.includes(item.dataIndex)) {
+            return true
+          }
+          return false
+        })
+        this.defColumns =  cols;
+      },
+      initColumns(){
+        //权限过滤（列权限控制时打开，修改第二个参数为授权码前缀）
+        //this.defColumns = colAuthFilter(this.defColumns,'testdemo:');
+
+        var key = this.$route.name+":colsettings";
+        let colSettings= Vue.ls.get(key);
+        if(colSettings==null||colSettings==undefined){
+          let allSettingColumns = [];
+          this.columns.forEach(function (item,i,array ) {
+            allSettingColumns.push(item.dataIndex);
+          })
+          this.settingColumns = allSettingColumns;
+          this.defColumns = this.columns;
+        }else{
+          this.settingColumns = colSettings;
+          const cols = this.columns.filter(item => {
+            if(item.key =='rowIndex'|| item.dataIndex=='action'){
+              return true;
+            }
+            if (colSettings.includes(item.dataIndex)) {
+              return true;
+            }
+            return false;
+          })
+          this.defColumns =  cols;
+        }
       },
       initDictConfig(){
       },

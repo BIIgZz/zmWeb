@@ -4,6 +4,43 @@
     <div class="table-page-search-wrapper">
       <a-form layout="inline" @keyup.enter.native="searchQuery">
         <a-row :gutter="24">
+          <a-col :xl="6" :lg="7" :md="8" :sm="24">
+            <a-form-item label="供应商类型">
+              <j-multi-select-tag placeholder="请选择供应商类型" dictCode="supplier" v-model="queryParam.type"/>
+            </a-form-item>
+          </a-col>
+          <a-col :xl="6" :lg="7" :md="8" :sm="24">
+            <a-form-item label="状态">
+              <j-dict-select-tag placeholder="请选择状态" v-model="queryParam.status" dictCode="service_status"/>
+            </a-form-item>
+          </a-col>
+          <template v-if="toggleSearchStatus">
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="联系人">
+                <a-input placeholder="请输入联系人" v-model="queryParam.linkman"></a-input>
+              </a-form-item>
+            </a-col>
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="公司名称">
+                <a-input placeholder="请输入公司名称" v-model="queryParam.company"></a-input>
+              </a-form-item>
+            </a-col>
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="联系电话">
+                <a-input placeholder="请输入联系电话" v-model="queryParam.tel"></a-input>
+              </a-form-item>
+            </a-col>
+          </template>
+          <a-col :xl="6" :lg="7" :md="8" :sm="24">
+            <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
+              <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
+              <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
+              <a @click="handleToggleSearch" style="margin-left: 8px">
+                {{ toggleSearchStatus ? '收起' : '展开' }}
+                <a-icon :type="toggleSearchStatus ? 'up' : 'down'"/>
+              </a>
+            </span>
+          </a-col>
         </a-row>
       </a-form>
     </div>
@@ -12,12 +49,18 @@
     <!-- 操作按钮区域 -->
     <div class="table-operator">
       <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>
-      <a-button type="primary" icon="download" @click="handleExportXls('供应商')">导出</a-button>
+      <a-button type="primary" icon="download" @click="handleExportXls('zm_supplier')">导出</a-button>
       <a-upload name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl" @change="handleImportExcel">
         <a-button type="primary" icon="import">导入</a-button>
       </a-upload>
       <!-- 高级查询区域 -->
       <j-super-query :fieldList="superFieldList" ref="superQueryModal" @handleSuperQuery="handleSuperQuery"></j-super-query>
+      <a-dropdown v-if="selectedRowKeys.length > 0">
+        <a-menu slot="overlay">
+          <a-menu-item key="1" @click="batchDel"><a-icon type="delete"/>删除</a-menu-item>
+        </a-menu>
+        <a-button style="margin-left: 8px"> 批量操作 <a-icon type="down" /></a-button>
+      </a-dropdown>
     </div>
 
     <!-- table区域-begin -->
@@ -25,92 +68,22 @@
       <div class="ant-alert ant-alert-info" style="margin-bottom: 16px;">
         <i class="anticon anticon-info-circle ant-alert-icon"></i> 已选择 <a style="font-weight: 600">{{ selectedRowKeys.length }}</a>项
         <a style="margin-left: 24px" @click="onClearSelected">清空</a>
-        <!--        自定义列-->
-        <span style="float:right;">
-          <a @click="loadData()"><a-icon type="sync" />刷新</a>
-          <a-divider type="vertical" />
-          <a-popover title="自定义列" trigger="click" placement="leftBottom">
-            <template slot="content">
-              <a-checkbox-group @change="onColSettingsChange" v-model="settingColumns" :defaultValue="settingColumns">
-                <a-row style="width: 400px">
-                  <template v-for="(item,index) in columns">
-                    <template v-if="item.key!='rowIndex'&& item.dataIndex!='action'">
-                        <a-col :span="12"><a-checkbox :value="item.dataIndex"><j-ellipsis :value="item.title" :length="10"></j-ellipsis></a-checkbox></a-col>
-                    </template>
-                  </template>
-                </a-row>
-              </a-checkbox-group>
-            </template>
-            <a><a-icon type="setting" />设置</a>
-          </a-popover>
-        </span>
-        <!--        自定义列 -->
       </div>
-      <template>
-        <div>
-          <a-tabs default-active-key="0"  type="card" @change="searchQuery"     v-model="queryParam.id">
-            <a-tab-pane key="0" tab="汽运" @click="this.onSelectChange">
-            </a-tab-pane>
-            <a-tab-pane key="1" tab="空运" force-render>
-
-            </a-tab-pane>
-            <a-tab-pane key="2" tab="海运">
-
-            </a-tab-pane>
-            <a-tab-pane key="3" tab="铁运">
-
-            </a-tab-pane>
-            <a-tab-pane key="4" tab="仓储">
-
-            </a-tab-pane>
-            <a-tab-pane key="5" tab="快递">
-
-            </a-tab-pane>
-            <a-tab-pane key="6" tab="报关" >
-            </a-tab-pane>
-            <a-tab-pane key="7" tab="清关" >
-            </a-tab-pane>
-            <a-tab-pane key="8" tab="中港" >
-          </a-tab-pane>
-            <a-tab-pane key="9" tab="其他" >
-            </a-tab-pane>
-
-
-          </a-tabs>
-        </div>
-      </template>
-    </div>
 
       <a-table
         ref="table"
         size="middle"
+        :scroll="{x:true}"
         bordered
         rowKey="id"
-        class="j-table-force-nowrap"
-        :scroll="{x:true}"
-        :columns="defColumns"
+        :columns="columns"
         :dataSource="dataSource"
         :pagination="ipagination"
         :loading="loading"
-        :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange, type:'radio'}"
-        :customRow="clickThenSelect"
+        :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
+        class="j-table-force-nowrap"
         @change="handleTableChange">
-        <!--        自定义列-->
-        <div slot="filterDropdown">
-          <a-card>
-            <a-checkbox-group @change="onColSettingsChange" v-model="settingColumns" :defaultValue="settingColumns">
-              <a-row style="width: 400px">
-                <template v-for="(item,index) in columns">
-                  <template v-if="item.key!='rowIndex'&& item.dataIndex!='action'">
-                    <a-col :span="12"><a-checkbox :value="item.dataIndex"><j-ellipsis :value="item.title" :length="10"></j-ellipsis></a-checkbox></a-col>
-                  </template>
-                </template>
-              </a-row>
-            </a-checkbox-group>
-          </a-card>
-        </div>
-        <a-icon slot="filterIcon" type='setting' :style="{ fontSize:'16px',color:  '#108ee9' }" />
-        <!--        自定义列-->
+
         <template slot="htmlSlot" slot-scope="text">
           <div v-html="text"></div>
         </template>
@@ -139,6 +112,9 @@
             <a class="ant-dropdown-link">更多 <a-icon type="down" /></a>
             <a-menu slot="overlay">
               <a-menu-item>
+                <a @click="handleDetail(record)">详情</a>
+              </a-menu-item>
+              <a-menu-item>
                 <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
                   <a>删除</a>
                 </a-popconfirm>
@@ -150,51 +126,69 @@
       </a-table>
     </div>
 
-    <a-tabs defaultActiveKey="1">
-      <a-tab-pane tab="客户表" key="1" >
-        <ZmPartnerList :mainId="selectedMainId" />
-      </a-tab-pane>
-    </a-tabs>
-
-    <zmSupplier-modal ref="modalForm" @ok="modalFormOk"></zmSupplier-modal>
+    <zm-supplier-modal ref="modalForm" @ok="modalFormOk"></zm-supplier-modal>
   </a-card>
 </template>
 
 <script>
 
-  import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-  import ZmSupplierModal from './modules/ZmSupplierModal'
-  import { getAction } from '@/api/manage'
-  import ZmPartnerList from './ZmPartnerList'
-  import {initDictOptions,filterMultiDictText} from '@/components/dict/JDictSelectUtil'
   import '@/assets/less/TableExpand.less'
-  import Vue from 'vue'
-
+  import { mixinDevice } from '@/utils/mixin'
+  import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+  // import ZmSupplierModal from './modules/ZmSupplierModal'
+  import {filterMultiDictText} from '@/components/dict/JDictSelectUtil'
+  import ZmSupplierModal from './modules/ZmSupplierModal__Style#Drawer'
   export default {
-    name: "ZmSupplierList",
-    mixins:[JeecgListMixin],
+    name: 'ZmSupplierList',
+    mixins:[JeecgListMixin, mixinDevice],
     components: {
-      ZmPartnerList,
       ZmSupplierModal
     },
     data () {
       return {
-        description: '供应商管理页面',
-        defColumns:[],
-        //列设置
-        settingColumns:[],
-        //列定义
+        description: 'zm_supplier管理页面',
         // 表头
         columns: [
           {
+            title: '#',
+            dataIndex: '',
+            key:'rowIndex',
+            width:60,
+            align:"center",
+            customRender:function (t,r,index) {
+              return parseInt(index)+1;
+            }
+          },
+
+          {
             title:'供应商类型',
             align:"center",
-            dataIndex: 'type'
+            dataIndex: 'type_dictText'
           },
           {
             title:'状态',
             align:"center",
-            dataIndex: 'status_dictText',
+            dataIndex: 'status_dictText'
+          },
+          {
+            title:'联系人',
+            align:"center",
+            dataIndex: 'linkman'
+          },
+          {
+            title:'公司名称(英)',
+            align:"center",
+            dataIndex: 'companyEn'
+          },
+          {
+            title:'公司名称',
+            align:"center",
+            dataIndex: 'company'
+          },
+          {
+            title:'联系电话',
+            align:"center",
+            dataIndex: 'tel'
           },
           {
             title:'备注',
@@ -207,10 +201,7 @@
             align:"center",
             fixed:"right",
             width:147,
-            scopedSlots: {
-              filterDropdown: 'filterDropdown',
-              filterIcon: 'filterIcon',
-              customRender: 'action'},
+            scopedSlots: { customRender: 'action' }
           }
         ],
         url: {
@@ -219,140 +210,37 @@
           deleteBatch: "/zmexpress/zmSupplier/deleteBatch",
           exportXlsUrl: "/zmexpress/zmSupplier/exportXls",
           importExcelUrl: "zmexpress/zmSupplier/importExcel",
+          
         },
-        dictOptions:{
-         status:[],
-        },
-        /* 分页参数 */
-        ipagination:{
-          current: 1,
-          pageSize: 5,
-          pageSizeOptions: ['5', '10', '50'],
-          showTotal: (total, range) => {
-            return range[0] + "-" + range[1] + " 共" + total + "条"
-          },
-          showQuickJumper: true,
-          showSizeChanger: true,
-          total: 0
-        },
-        selectedMainId:'',
+        dictOptions:{},
         superFieldList:[],
       }
     },
     created() {
-      // this.getSuperFieldList();
-      this.initColumns();
+    this.getSuperFieldList();
     },
     computed: {
       importExcelUrl: function(){
         return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`;
-      }
+      },
     },
     methods: {
-
-      //列设置更改事件
-      onColSettingsChange (checkedValues) {
-        var key = this.$route.name+":colsettings";
-        Vue.ls.set(key, checkedValues, 7 * 24 * 60 * 60 * 1000)
-        this.settingColumns = checkedValues;
-        const cols = this.columns.filter(item => {
-          if(item.key =='rowIndex'|| item.dataIndex=='action'){
-            return true
-          }
-          if (this.settingColumns.includes(item.dataIndex)) {
-            return true
-          }
-          return false
-        })
-        this.defColumns =  cols;
-      },
-      initColumns(){
-        //权限过滤（列权限控制时打开，修改第二个参数为授权码前缀）
-        //this.defColumns = colAuthFilter(this.defColumns,'testdemo:');
-
-        var key = this.$route.name+":colsettings";
-        let colSettings= Vue.ls.get(key);
-        if(colSettings==null||colSettings==undefined){
-          let allSettingColumns = [];
-          this.columns.forEach(function (item,i,array ) {
-            allSettingColumns.push(item.dataIndex);
-          })
-          this.settingColumns = allSettingColumns;
-          this.defColumns = this.columns;
-        }else{
-          this.settingColumns = colSettings;
-          const cols = this.columns.filter(item => {
-            if(item.key =='rowIndex'|| item.dataIndex=='action'){
-              return true;
-            }
-            if (colSettings.includes(item.dataIndex)) {
-              return true;
-            }
-            return false;
-          })
-          this.defColumns =  cols;
-        }
-      },
       initDictConfig(){
-        initDictOptions('service_status').then((res) => {
-          if (res.success) {
-            this.$set(this.dictOptions, 'status', res.result)
-          }
-        })
-      },
-      clickThenSelect(record) {
-        return {
-          on: {
-            click: () => {
-
-              this.onSelectChange(record.id.split(","), [record]);
-            }
-          }
-        }
-      },
-      onClearSelected() {
-        this.selectedRowKeys = [];
-        this.selectionRows = [];
-        this.selectedMainId=''
-      },
-      onSelectChange(selectedRowKeys, selectionRows) {
-        this.selectedMainId=selectedRowKeys[0]
-        this.selectedRowKeys = selectedRowKeys;
-        this.selectionRows = selectionRows;
-      },
-      loadData(arg) {
-        if(!this.url.list){
-          this.$message.error("请设置url.list属性!")
-          return
-        }
-        //加载数据 若传入参数1则加载第一页的内容
-        if (arg === 1) {
-          this.ipagination.current = 1;
-        }
-        this.onClearSelected()
-        var params = this.getQueryParams();//查询条件
-        this.loading = true;
-        getAction(this.url.list, params).then((res) => {
-          if (res.success) {
-            this.dataSource = res.result.records;
-            this.ipagination.total = res.result.total;
-          }
-          if(res.code===510){
-            this.$message.warning(res.message)
-          }
-          this.loading = false;
-        })
       },
       getSuperFieldList(){
         let fieldList=[];
-        fieldList.push({type:'string',value:'type',text:'供应商类型',dictCode:''})
-        fieldList.push({type:'string',value:'status',text:'状态',dictCode:'service_status'})
         fieldList.push({type:'string',value:'note',text:'备注',dictCode:''})
+        fieldList.push({type:'list_multi',value:'type',text:'供应商类型',dictTable:'', dictText:'', dictCode:'supplier'})
+        fieldList.push({type:'string',value:'status',text:'状态',dictCode:'service_status'})
+        fieldList.push({type:'string',value:'linkman',text:'联系人',dictCode:''})
+        fieldList.push({type:'string',value:'companyEn',text:'公司名称(英)',dictCode:''})
+        fieldList.push({type:'string',value:'company',text:'公司名称',dictCode:''})
+        fieldList.push({type:'string',value:'tel',text:'联系电话',dictCode:''})
         this.superFieldList = fieldList
       }
     }
   }
 </script>
 <style scoped>
-  @import '~@assets/less/common.less'
+  @import '~@assets/less/common.less';
 </style>

@@ -234,7 +234,8 @@
   import { FormTypes,getRefPromise,VALIDATE_NO_PASSED } from '@/utils/JEditableTableUtil'
   import { JEditableTableModelMixin } from '@/mixins/JEditableTableModelMixin'
   import { validateDuplicateValue } from '@/utils/util'
-
+  import { putAction } from '@api/manage'
+  const ruleBaseURL = '/sys/fillRule/executeRuleByCode/'
   export default {
     name: 'ZmWaybillForm',
     mixins: [JEditableTableModelMixin],
@@ -242,7 +243,7 @@
     },
     data() {
       return {
-        visible_form: false,
+        visible_form: true,
         labelCol: {
           xs: { span: 24 },
           sm: { span: 6 },
@@ -259,8 +260,8 @@
           xs: { span: 24 },
           sm: { span: 20 },
         },
-        model:{
-        },
+        // 页面的数据
+        model: { orderId: '' },
         // 新增时子表默认添加几行空数据
         addDefaultRowNum: 1,
         validatorRules: {
@@ -429,6 +430,9 @@
           zmImportGood: {
             list: '/zmexpress/zmWaybill/queryZmImportGoodByMainId'
           },
+          rule: {
+            orderId: ruleBaseURL + 'shop_order_num'
+          },
         }
       }
     },
@@ -446,7 +450,9 @@
       },
     },
     created () {
-
+        if (this.model.waybillId==null){
+          this.visible_form = false;
+        }
     },
     methods: {
       addBefore(){
@@ -482,14 +488,25 @@
             })
           })
       },
+      /** 获取订单号*/
+      getOrderNum() {
+        putAction(this.url.rule.orderId, this.model).then(res => {
+          // 执行成功，获取返回的值，并赋到页面上
+          if (res.success) {
+            this.model.orderId = res.result
+          }
+        })
+      },
+      /** 打开抽屉 */
       showDrawer() {
-        console.log(this.model.name);
-        if (this.model.name!=null){
+        if (this.model.orderId==''){
+          this.getOrderNum();
+        }
+        if (this.model.name!=''){
           this.visible_form = true;
         }else if(this.model.name==' '){
           this.visible_form = false;
         }
-
       },
       /** 整理成formData */
       classifyIntoFormData(allValues) {

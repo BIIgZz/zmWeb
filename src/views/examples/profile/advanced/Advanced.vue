@@ -1,28 +1,38 @@
 <template>
-  <page-layout title="单号：234231029431" logo="https://gw.alipayobjects.com/zos/rmsportal/nxkuOJlFJuAUhzlMTCEe.png">
+  <page-layout :title="pageTitle" logo="https://gw.alipayobjects.com/zos/rmsportal/nxkuOJlFJuAUhzlMTCEe.png">
 
     <detail-list slot="headerContent" size="small" :col="2" class="detail-layout">
-      <detail-list-item term="创建人">曲丽丽</detail-list-item>
-      <detail-list-item term="订购产品">XX服务</detail-list-item>
-      <detail-list-item term="创建时间">2018-08-07</detail-list-item>
+      <detail-list-item term="客户">{{ myProp.name}}</detail-list-item>
+      <detail-list-item term="目的地">{{ myProp.destination}}</detail-list-item>
+      <detail-list-item term="服务类型">{{ myProp.service_dictText}}</detail-list-item>
+      <detail-list-item term="目的地">{{ myProp.destination}}</detail-list-item>
+      <detail-list-item term="订购产品">{{myProp.enname}}</detail-list-item>
+      <detail-list-item term="创建时间">{{ myProp.createTime }}</detail-list-item>
       <detail-list-item term="关联单据"><a>12421</a></detail-list-item>
-      <detail-list-item term="生效日期">2018-08-07 ~ 2018-12-11</detail-list-item>
-      <detail-list-item term="备注">请于两个工作日内确认</detail-list-item>
+      <detail-list-item term="创建日期">{{ myProp.createTime }}</detail-list-item>
+      <detail-list-item term="备注">{{ myProp.remark }}</detail-list-item>
     </detail-list>
     <a-row slot="extra" class="status-list">
       <a-col :xs="12" :sm="12">
         <div class="text">状态</div>
-        <div class="heading">待审批</div>
+        <div class="heading" v-if="status == 0">已下单</div>
+        <div class="heading" v-else-if="status == 1">已收货</div>
+        <div class="heading" v-else-if="status == 2">装运中</div>
+        <div class="heading" v-else-if="status == 3">已签收</div>
+        <div class="heading" v-else-if="status == 5">退件</div>
+        <div class="heading" v-else-if="status == 6">已取消</div>
+
+
       </a-col>
       <a-col :xs="12" :sm="12">
-        <div class="text">订单金额</div>
-        <div class="heading">¥ 568.08</div>
+        <div class="text">费用</div>
+        <div class="heading">¥  568.08 </div>
       </a-col>
     </a-row>
     <!-- actions -->
     <template slot="action">
       <a-button-group style="margin-right: 4px;">
-        <a-button>操作</a-button>
+        <a-button>导出运单</a-button>
         <a-button>操作</a-button>
         <a-button><a-icon type="ellipsis"/></a-button>
       </a-button-group>
@@ -42,21 +52,26 @@
       </a-steps>
     </a-card>
 
-    <a-card style="margin-top: 24px" :bordered="false" title="用户信息">
+    <a-card style="margin-top: 24px" :bordered="false" title="基础信息">
       <detail-list>
-        <detail-list-item term="用户姓名">付晓晓</detail-list-item>
-        <detail-list-item term="会员卡号">32943898021309809423</detail-list-item>
-        <detail-list-item term="身份证">3321944288191034921</detail-list-item>
-        <detail-list-item term="联系方式">18112345678</detail-list-item>
-        <detail-list-item term="联系地址">浙江省杭州市西湖区黄姑山路工专路交叉路口</detail-list-item>
+        <detail-list-item term="收件人">{{myProp.recipient}}</detail-list-item>
+        <detail-list-item term="发件人">{{myProp.recipient}}</detail-list-item>
+        <detail-list-item term="身份证">{{myProp.recipient}}</detail-list-item>
+        <detail-list-item term="报关方式">{{myProp.customsDeclarationMethod_dictText}}</detail-list-item>
+        <detail-list-item term="交税方式">{{myProp.taxPaymentMethod_dictText}}</detail-list-item>
+        <detail-list-item term="申报币种">{{myProp.recipient}}</detail-list-item>
+        <detail-list-item term="客户单号">{{myProp.waybillId}}</detail-list-item>
+        <detail-list-item term="Amazon Reference ID">{{myProp.recipient}}</detail-list-item>
+        <detail-list-item term="扩展单号">{{myProp.recipient}}</detail-list-item>
+        <detail-list-item term="属性">{{myProp.itemProperties}}</detail-list-item>
       </detail-list>
-      <detail-list title="信息组">
-        <detail-list-item term="某某数据">725</detail-list-item>
-        <detail-list-item term="该数据更新时间">2018-08-08</detail-list-item>
-        <detail-list-item >&nbsp;</detail-list-item>
-        <detail-list-item term="某某数据">725</detail-list-item>
-        <detail-list-item term="该数据更新时间">2018-08-08</detail-list-item>
-        <detail-list-item >&nbsp;</detail-list-item>
+      <detail-list title="尺寸">
+        <detail-list-item term="收费重">---</detail-list-item>
+        <detail-list-item term="实重">--</detail-list-item>
+        <detail-list-item term="材积重">--</detail-list-item>
+        <detail-list-item term="计泡系数">--</detail-list-item>
+        <detail-list-item term="体积">--</detail-list-item>
+        <detail-list-item term="箱数">--</detail-list-item>
       </detail-list>
       <a-card type="inner" title="多层信息组">
         <detail-list title="组名称" size="small">
@@ -149,14 +164,17 @@
     mixins: [mixinDevice],
     data () {
       return {
+        pageTitle:this.myProp.waybillId+'/'+this.myProp.orderId+'/'+this.myProp.name,
+        status:this.myProp.status,
+        data:this.myProp,
         tabList: [
           {
             key: '1',
-            tab: '操作日志一'
+            tab: '品名'
           },
           {
             key: '2',
-            tab: '操作日志二'
+            tab: '装箱单'
           },
           {
             key: '3',
@@ -279,6 +297,22 @@
             remark: '-'
           }
         ],
+      }
+    },
+    created() {
+
+    },
+    watch:{
+      myProp(data){
+        this.pageTitle=this.myProp.waybillId+'/'+this.myProp.orderId+'/'+this.myProp.name;
+        this.status = this.myProp.status;
+      },
+
+    },
+    props:{
+      myProp:{
+        type:Object,
+        default:""
       }
     },
     filters: {

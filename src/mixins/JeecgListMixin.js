@@ -220,7 +220,7 @@ export const JeecgListMixin = {
             content: "是否修改选中数据?",
             onOk: function() {
               that.loading = true;
-              putAction(  '/zmexpress/zmImportFba/change',{ ids: ids }).then((res) => {
+              putAction(  '/zmexpress/zmWaybill/change',{ ids: ids }).then((res) => {
                 if (res.success) {
                   //重新计算分页问题
                   that.reCalculatePage(that.selectedRowKeys.length)
